@@ -1660,7 +1660,7 @@
       return {
         ...original,
         grade,
-        damage: grade === "gold" ? 350 : grade === "purple" ? 50 : 5
+        damage: grade === "gold" ? 200 : grade === "purple" ? 50 : 5
       };
     }
 
@@ -1980,7 +1980,7 @@
       selectedIndex = ownedCards.indexOf(merged);
 
       if (nextGrade === "gold") {
-        addLog(`🌟 <b>${selected.name}</b> 보라카드 3장 합성! <span class="win">황금카드 완성 · 데미지 350</span>`);
+        addLog(`🌟 <b>${selected.name}</b> 보라카드 3장 합성! <span class="win">황금카드 완성 · 데미지 200</span>`);
       } else {
         addLog(`🟣 <b>${selected.name}</b> 일반카드 3장 합성! <span class="win">보라카드 완성 · 데미지 50</span>`);
       }
