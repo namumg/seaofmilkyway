@@ -68,6 +68,10 @@
       letter-spacing: -0.3px;
     }
 
+    .synergy-panel {
+      overflow: visible;
+    }
+
     .battle-panel {
       display: grid;
       gap: 10px;
@@ -136,22 +140,41 @@
 
     .damage-pop {
       position: absolute;
-      right: 18px;
+      left: 14px;
       top: 18px;
-      z-index: 6;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255, 77, 131, 0.90);
+      z-index: 8;
+      min-width: 116px;
+      padding: 8px 10px;
+      border-radius: 16px;
+      background: rgba(255, 77, 131, 0.96);
       color: #fff;
-      font-weight: 950;
-      font-size: 14px;
+      font-weight: 1000;
+      font-size: 15px;
+      line-height: 1.15;
+      text-align: center;
+      white-space: pre-line;
       opacity: 0;
       transform: translateY(8px) scale(0.9);
       pointer-events: none;
+      border: 2px solid rgba(255,255,255,0.75);
+      box-shadow: 0 0 20px rgba(255,77,131,0.45), 0 8px 24px rgba(0,0,0,0.35);
+    }
+
+    .damage-pop.success {
+      background: linear-gradient(135deg, rgba(255,217,87,0.98), rgba(255,91,172,0.95));
+      color: #121420;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.32);
+      box-shadow: 0 0 24px rgba(255,217,87,0.55), 0 8px 24px rgba(0,0,0,0.35);
+    }
+
+    .damage-pop.fail {
+      background: linear-gradient(135deg, rgba(88,88,112,0.96), rgba(185,55,88,0.96));
+      color: #fff;
+      box-shadow: 0 0 24px rgba(255,91,130,0.45), 0 8px 24px rgba(0,0,0,0.35);
     }
 
     .damage-pop.active {
-      animation: damagePop 0.85s ease forwards;
+      animation: damagePop 0.95s ease forwards;
     }
 
     @keyframes enemyHit {
@@ -176,10 +199,11 @@
     }
 
     @keyframes damagePop {
-      0% { opacity: 0; transform: translateY(8px) scale(0.9); }
-      18% { opacity: 1; transform: translateY(0) scale(1.08); }
-      72% { opacity: 1; transform: translateY(-18px) scale(1); }
-      100% { opacity: 0; transform: translateY(-28px) scale(0.95); }
+      0% { opacity: 0; transform: translateY(10px) scale(0.72) rotate(-6deg); }
+      18% { opacity: 1; transform: translateY(0) scale(1.18) rotate(3deg); }
+      42% { transform: translateY(-6px) scale(0.98) rotate(-2deg); }
+      72% { opacity: 1; transform: translateY(-14px) scale(1.04) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-28px) scale(0.92) rotate(0deg); }
     }
 
     .enemy-strip {
@@ -610,7 +634,7 @@
 
 
     .thorn-damage-preview {
-      margin-top: -4px;
+      margin-top: 0;
       padding: 8px 11px;
       border-radius: 13px;
       background: rgba(0,0,0,0.18);
@@ -631,6 +655,23 @@
     .thorn-damage-preview .fail-dmg {
       color: #ff91ac;
       font-weight: 950;
+    }
+
+    .thorn-info-box {
+      display: grid;
+      gap: 6px;
+    }
+
+    .thorn-info-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      color: #ffffff;
+    }
+
+    .thorn-info-line:last-child {
+      color: #ffffff;
     }
 
     .thorn-option {
@@ -720,6 +761,12 @@
       overflow: hidden;
     }
 
+    .card-manage-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
     .gold-box {
       margin-bottom: 10px;
       display: flex;
@@ -754,13 +801,20 @@
     .cards {
       display: grid;
       grid-template-columns: repeat(6, 76px);
-      gap: 6px;
-      padding-right: 0;
-      justify-content: start;
-      align-content: start;
+      gap: 4px;
       width: 100%;
+      min-width: 100%;
       max-width: 100%;
-      overflow: visible;
+      margin: 0;
+      padding: 0 2px 0 2px;
+      justify-content: center;
+      align-content: start;
+      min-height: 420px;
+      max-height: 420px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-gutter: stable;
+      overscroll-behavior: contain;
     }
 
     .card {
@@ -851,6 +905,9 @@
     .empty {
       grid-column: 1 / -1;
       padding: 24px;
+      min-height: 120px;
+      display: grid;
+      place-items: center;
       text-align: center;
       border: 1px dashed rgba(255,255,255,0.28);
       border-radius: 16px;
@@ -860,29 +917,25 @@
 
     .synergy-list {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: 8px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding-bottom: 2px;
-      white-space: nowrap;
+      overflow: visible;
+      padding-bottom: 0;
+      white-space: normal;
       min-height: 44px;
+      align-items: flex-start;
     }
 
     .synergy-list::-webkit-scrollbar {
-      height: 7px;
-    }
-
-    .synergy-list::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.18);
-      border-radius: 999px;
+      display: none;
     }
 
     .synergy {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      flex: 0 0 auto;
+      flex: 0 1 auto;
+      max-width: 100%;
       padding: 8px 12px;
       border-radius: 999px;
       background: rgba(121,255,189,0.13);
@@ -937,7 +990,13 @@
         max-width: none;
         min-width: 0;
       }
-      .cards { grid-template-columns: repeat(6, 76px); }
+      .cards {
+        grid-template-columns: repeat(6, 76px);
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        justify-content: center;
+      }
       .synergy-list { max-height: none; }
     }
 
@@ -948,7 +1007,16 @@
       .enemy-strip { min-height: 90px; }
       .enemy-emoji { width: 70px; height: 70px; font-size: 54px; }
       .enemy-name { font-size: 20px; }
-      .cards { grid-template-columns: repeat(4, 72px); }
+      .cards {
+        grid-template-columns: repeat(4, 72px);
+        gap: 4px;
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        justify-content: center;
+        min-height: 360px;
+        max-height: 360px;
+      }
       .card { width: 72px; min-width: 72px; max-width: 72px; }
     }
   </style>
@@ -990,15 +1058,24 @@
           <div class="progress" id="damageProgress"></div>
         </div>
 
+        <div class="thorn-damage-preview thorn-info-box">
+          <div class="thorn-info-line">
+            <span>뭉가성공대미지: <span class="success-dmg" id="thornSuccessDamage">0</span></span>
+            <span>뭉가실패대미지: <span class="fail-dmg" id="thornFailDamage">0</span></span>
+          </div>
+          <div class="thorn-info-line">
+            <span>뭉가성공: <span class="success-dmg" id="thornSuccessCount">0</span>회</span>
+            <span>뭉가실패: <span class="fail-dmg" id="thornFailCount">0</span>회</span>
+          </div>
+          <div class="thorn-info-line">
+            <span id="thornResultHint">뭉가 결과 판단: -</span>
+          </div>
+        </div>
+
         <label class="thorn-option">
           <input type="checkbox" id="thornCheck">
-          <span><b>뭉툭한가시</b> <span class="thorn-desc">[10%확률로 데미지+10%, 90%확률로 -20%. 뭉가 성공시 10G획득]</span></span>
+          <span><b>뭉툭한가시</b> <span class="thorn-desc">[10%확률로 데미지+10%, 90%확률로 -20%. 뭉가 성공시 7G획득]</span></span>
         </label>
-
-        <div class="thorn-damage-preview">
-          <span>뭉가성공대미지: <span class="success-dmg" id="thornSuccessDamage">0</span></span>
-          <span>뭉가실패대미지: <span class="fail-dmg" id="thornFailDamage">0</span></span>
-        </div>
 
         <div class="battle-actions">
           <button class="battle-btn" id="battleBtn">전투 시작</button>
@@ -1009,7 +1086,7 @@
       </section>
 
       <aside class="side-grid">
-        <section class="panel">
+        <section class="panel card-manage-panel">
           <h2>카드 관리</h2>
 
           <div class="gold-box">
@@ -1027,7 +1104,7 @@
           <div class="cards" id="cards"></div>
         </section>
 
-        <section class="panel">
+        <section class="panel synergy-panel">
           <h2>발동 시너지</h2>
           <div class="synergy-list" id="synergyList"></div>
         </section>
@@ -1071,18 +1148,18 @@
     ];
 
     const synergyRules = {
-      "애니츠": [{ count: 2, damage: 12 }, { count: 5, damage: 60 }],
-      "실린": [{ count: 2, damage: 12 }, { count: 4, damage: 36 }],
-      "요즈": [{ count: 3, damage: 24 }],
-      "슈샤": [{ count: 3, damage: 24 }],
-      "헌터": [{ count: 3, damage: 24 }],
-      "데런": [{ count: 2, damage: 5 }, { count: 4, damage: 48 }],
-      "분석가": [{ count: 2, damage: 12 }, { count: 5, damage: 60 }],
-      "유망주": [{ count: 3, damage: 36 }],
-      "르세라핌": [{ count: 1, damage: 8 }, { count: 3, damage: 20 }, { count: 5, damage: 60 }],
-      "우상향": [{ count: 2, damage: 24 }],
-      "노인": [{ count: 3, damage: 36 }],
-      "원피스": [{ count: 2, damage: 5 }, { count: 4, damage: 48 }]
+      "애니츠": [{ count: 2, damage: 10 }, { count: 5, damage: 60 }],
+      "실린": [{ count: 2, damage: 10 }, { count: 4, damage: 50 }],
+      "요즈": [{ count: 3, damage: 22 }],
+      "슈샤": [{ count: 3, damage: 22 }],
+      "헌터": [{ count: 3, damage: 22 }],
+      "데런": [{ count: 2, damage: 10 }, { count: 4, damage: 50 }],
+      "분석가": [{ count: 2, damage: 10 }, { count: 5, damage: 60 }],
+      "유망주": [{ count: 3, damage: 40 }],
+      "르세라핌": [{ count: 1, damage: 5 }, { count: 3, damage: 20 }, { count: 5, damage: 60 }],
+      "우상향": [{ count: 2, damage: 25 }],
+      "노인": [{ count: 3, damage: 40 }],
+      "원피스": [{ count: 2, damage: 10 }, { count: 4, damage: 50 }]
     };
 
     const stages = [
@@ -1107,6 +1184,16 @@
     let stageIndex = 0;
     let score = 0;
     let gameOver = false;
+
+    const THORN_SUCCESS_COUNT_KEY = "sea_of_milkyway_thorn_success_count";
+    const THORN_FAIL_COUNT_KEY = "sea_of_milkyway_thorn_fail_count";
+    let thornSuccessCount = Number(localStorage.getItem(THORN_SUCCESS_COUNT_KEY) || 0);
+    let thornFailCount = Number(localStorage.getItem(THORN_FAIL_COUNT_KEY) || 0);
+
+    function saveThornCounts() {
+      localStorage.setItem(THORN_SUCCESS_COUNT_KEY, String(thornSuccessCount));
+      localStorage.setItem(THORN_FAIL_COUNT_KEY, String(thornFailCount));
+    }
 
     const goldEl = document.getElementById("gold");
     const battleDamageEl = document.getElementById("battleDamage");
@@ -1134,6 +1221,9 @@
     const thornCheckEl = document.getElementById("thornCheck");
     const thornSuccessDamageEl = document.getElementById("thornSuccessDamage");
     const thornFailDamageEl = document.getElementById("thornFailDamage");
+    const thornSuccessCountEl = document.getElementById("thornSuccessCount");
+    const thornFailCountEl = document.getElementById("thornFailCount");
+    const thornResultHintEl = document.getElementById("thornResultHint");
     const thornSuccessEffectEl = document.getElementById("thornSuccessEffect");
     const thornFailEffectEl = document.getElementById("thornFailEffect");
     const thornRouletteEl = document.getElementById("thornRoulette");
@@ -1349,8 +1439,21 @@
 
       goldEl.textContent = gold;
       battleDamageEl.textContent = data.totalDamage;
-      if (thornSuccessDamageEl) thornSuccessDamageEl.textContent = Math.floor(data.totalDamage * 1.10);
-      if (thornFailDamageEl) thornFailDamageEl.textContent = Math.floor(data.totalDamage * 0.8);
+      const thornSuccessDamage = Math.floor(data.totalDamage * 1.10);
+      const thornFailDamage = Math.floor(data.totalDamage * 0.8);
+      if (thornSuccessDamageEl) thornSuccessDamageEl.textContent = thornSuccessDamage;
+      if (thornFailDamageEl) thornFailDamageEl.textContent = thornFailDamage;
+      if (thornSuccessCountEl) thornSuccessCountEl.textContent = thornSuccessCount;
+      if (thornFailCountEl) thornFailCountEl.textContent = thornFailCount;
+      if (thornResultHintEl) {
+        if (thornFailDamage >= stage.hp) {
+          thornResultHintEl.innerHTML = '<span class="fail-dmg">뭉가 실패해도 이김</span>';
+        } else if (thornSuccessDamage >= stage.hp) {
+          thornResultHintEl.innerHTML = '<span class="success-dmg">뭉가 성공하면 이김</span>';
+        } else {
+          thornResultHintEl.innerHTML = '<span>뭉가 성공해도 못 이김</span>';
+        }
+      }
       stageNoEl.textContent = Math.min(stageIndex + 1, stages.length);
       scoreEl.textContent = score;
 
@@ -1481,7 +1584,7 @@
       rouletteWordEl.textContent = thornSuccess ? "성공!" : "실패...";
       rouletteWordEl.className = "roulette-word " + (thornSuccess ? "success" : "fail");
       rouletteSubEl.textContent = thornSuccess
-        ? "뭉툭한가시 성공! 데미지 +10%, 10골드 획득!"
+        ? "뭉툭한가시 성공! 데미지 +10%, 7골드 획득!"
         : "뭉가실패... 데미지 -20%";
 
       await sleep(950);
@@ -1512,12 +1615,12 @@
       }, 1150);
     }
 
-    function playBattleAnimation(totalDamage, isWin) {
+    function playBattleAnimation(totalDamage, isWin, popupText = "", popupKind = "") {
       if (!enemyStripEl || !slashEffectEl || !damagePopEl) return;
 
       enemyStripEl.classList.remove("hit", "attack-ready");
       slashEffectEl.classList.remove("active");
-      damagePopEl.classList.remove("active");
+      damagePopEl.classList.remove("active", "success", "fail");
 
       void enemyStripEl.offsetWidth;
       enemyStripEl.classList.add("attack-ready");
@@ -1525,15 +1628,24 @@
       setTimeout(() => {
         slashEffectEl.classList.add("active");
         enemyStripEl.classList.add("hit");
-        damagePopEl.textContent = isWin ? `-${totalDamage} CRITICAL!` : `-${totalDamage} HIT`;
+
+        if (popupText) {
+          damagePopEl.textContent = popupText;
+        } else {
+          damagePopEl.textContent = isWin ? `-${totalDamage}` : `-${totalDamage}`;
+        }
+
+        if (popupKind === "success") damagePopEl.classList.add("success");
+        if (popupKind === "fail") damagePopEl.classList.add("fail");
+
         damagePopEl.classList.add("active");
       }, 120);
 
       setTimeout(() => {
         enemyStripEl.classList.remove("hit", "attack-ready");
         slashEffectEl.classList.remove("active");
-        damagePopEl.classList.remove("active");
-      }, 950);
+        damagePopEl.classList.remove("active", "success", "fail");
+      }, 1000);
     }
 
     async function battle() {
@@ -1549,6 +1661,8 @@
 
       let battleDamage = data.totalDamage;
       let thornText = "";
+      let thornPopupText = "";
+      let thornPopupKind = "";
 
       battleBtn.disabled = true;
 
@@ -1559,19 +1673,27 @@
 
         if (thornSuccess) {
           battleDamage = Math.floor(battleDamage * 1.10);
-          gold += 10;
-          thornText = `<br>🌵 뭉툭한가시 성공! 데미지 +10% → <b>${battleDamage}</b> · <b>+10G</b>`;
+          gold += 7;
+          thornSuccessCount += 1;
+          saveThornCounts();
+          thornText = `<br>🌵 뭉툭한가시 성공! 데미지 +10% → <b>${battleDamage}</b> · <b>+7G</b>`;
+          thornPopupText = "뭉툭한가시\n성공";
+          thornPopupKind = "success";
           showThornSuccessEffect();
         } else {
           battleDamage = Math.floor(battleDamage * 0.8);
+          thornFailCount += 1;
+          saveThornCounts();
           thornText = `<br>🌵 뭉가실패... 데미지 -20% → <b>${battleDamage}</b>`;
+          thornPopupText = "뭉툭한가시\n실패";
+          thornPopupKind = "fail";
           showThornFailEffect();
         }
       }
 
       const isWin = battleDamage >= stage.hp;
 
-      playBattleAnimation(battleDamage, isWin);
+      playBattleAnimation(battleDamage, isWin, thornPopupText, thornPopupKind);
 
       if (isWin) {
         gold += stage.reward;
@@ -1638,7 +1760,7 @@
         <div class="roulette-window">
           <div class="roulette-word spin" id="rouletteWord">성공</div>
         </div>
-        <div class="roulette-sub" id="rouletteSub">10% 확률로 성공하면 데미지 +10%와 10골드를 얻습니다.</div>
+        <div class="roulette-sub" id="rouletteSub">10% 확률로 성공하면 데미지 +10%와 7골드를 얻습니다.</div>
       </div>
     </div>
   </div>
