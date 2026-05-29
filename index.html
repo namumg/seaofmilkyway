@@ -1074,15 +1074,16 @@
 
     .ranking-item {
       display: grid;
-      grid-template-columns: 30px minmax(52px, 1fr) 54px 108px 34px;
+      grid-template-columns: 34px minmax(0, 1fr) 58px 98px 42px;
       gap: 5px;
       align-items: center;
-      padding: 8px 9px;
+      padding: 8px 8px;
       border-radius: 14px;
       background: rgba(0,0,0,0.18);
       border: 1px solid rgba(255,255,255,0.09);
       font-size: 11px;
       line-height: 1.15;
+      white-space: nowrap;
       overflow: hidden;
     }
 
@@ -1103,17 +1104,18 @@
       color: #79ffbd;
       font-weight: 1000;
       white-space: nowrap;
-      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .ranking-clear-time,
+    .ranking-elapsed-time,
     .ranking-thorn-count {
       color: #ffe182;
       font-weight: 900;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: clip;
-      text-align: right;
+      text-overflow: ellipsis;
     }
 
     .ranking-message {
@@ -1123,7 +1125,6 @@
     }
 
     @media (max-width: 1080px) {
-
 
     .main-layout { grid-template-columns: 1fr; }
       .side-grid {
@@ -1170,17 +1171,10 @@
         grid-template-columns: 1fr;
       }
       .ranking-item {
-        grid-template-columns: 26px minmax(42px, 1fr) 48px 96px 30px;
+        grid-template-columns: 28px minmax(0, 1fr) 46px 78px 34px;
         gap: 4px;
-        padding: 7px 7px;
-        font-size: 10.5px;
-      }
-      .ranking-rank {
-        font-size: 10.5px;
-      }
-      .ranking-clear-time,
-      .ranking-thorn-count {
-        grid-column: auto;
+        padding: 7px 6px;
+        font-size: 10px;
       }
 
       .enemy-strip { min-height: 90px; }
@@ -1332,6 +1326,7 @@
     const DRAW_COST = 5;
     const RANKING_API_URL = "https://script.google.com/macros/s/AKfycbxde7Ya4Rcd664vF9ZD3ep2Ga7s1ct21J3Y53UNKebaKO2ti9HH986CyrdFY0a92zMR/exec";
     const RANKING_TOP_LIMIT = 10;
+    const CLEAR_NOTICE = "축하합니다! 클리어하셨습니다! 랭킹(맨아래)에서 등록해주세요!";
 
     const SELL_REWARDS = {
       normal: 3,
@@ -1485,49 +1480,36 @@
     }
 
     function formatCurrentTime(date = new Date()) {
-      const yyyy = date.getFullYear();
+      const yy = String(date.getFullYear()).slice(-2);
       const mm = String(date.getMonth() + 1).padStart(2, "0");
       const dd = String(date.getDate()).padStart(2, "0");
-      const hh = String(date.getHours()).padStart(2, "0");
+      const hours = date.getHours();
+      const ampm = hours < 12 ? "오전" : "오후";
+      const hh = String(hours % 12 || 12).padStart(2, "0");
       const mi = String(date.getMinutes()).padStart(2, "0");
-      const ss = String(date.getSeconds()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+      return `${yy}-${mm}-${dd} ${ampm}${hh}:${mi}`;
     }
 
-    function formatRankingDisplayTime(value) {
+    function formatRankingTime(value) {
       if (!value) return "-";
+      const text = String(value).trim();
+      const compactPattern = /^\d{2}-\d{2}-\d{2}\s+(오전|오후)\d{1,2}:\d{2}$/;
+      if (compactPattern.test(text)) return text;
 
-      const raw = String(value).trim();
-      const normalized = raw
-        .replace(/\./g, "-")
-        .replace(" ", "T");
-      const date = new Date(normalized);
+      const normalized = text.includes("T") ? text : text.replace(" ", "T");
+      const parsed = new Date(normalized);
+      if (!Number.isNaN(parsed.getTime())) return formatCurrentTime(parsed);
 
-      if (!Number.isNaN(date.getTime())) {
-        const yy = String(date.getFullYear()).slice(-2);
-        const mm = String(date.getMonth() + 1).padStart(2, "0");
-        const dd = String(date.getDate()).padStart(2, "0");
-        const hours = date.getHours();
-        const ampm = hours < 12 ? "오전" : "오후";
-        const displayHour = hours % 12 || 12;
-        const hh = String(displayHour).padStart(2, "0");
-        const mi = String(date.getMinutes()).padStart(2, "0");
-        return `${yy}-${mm}-${dd} ${ampm}${hh}:${mi}`;
-      }
-
-      const match = raw.match(/(\d{2,4})[-/.](\d{1,2})[-/.](\d{1,2}).*?(\d{1,2}):(\d{2})/);
+      const match = text.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})/);
       if (match) {
-        const yy = match[1].slice(-2);
-        const mm = String(Number(match[2])).padStart(2, "0");
-        const dd = String(Number(match[3])).padStart(2, "0");
-        const hours = Number(match[4]);
+        const [, yyyy, mm, dd, hourText, mi] = match;
+        const hours = Number(hourText);
         const ampm = hours < 12 ? "오전" : "오후";
         const hh = String(hours % 12 || 12).padStart(2, "0");
-        const mi = match[5];
-        return `${yy}-${mm}-${dd} ${ampm}${hh}:${mi}`;
+        return `${yyyy.slice(-2)}-${mm}-${dd} ${ampm}${hh}:${mi}`;
       }
 
-      return raw;
+      return text;
     }
 
     function formatElapsedTime(ms) {
@@ -1543,7 +1525,7 @@
 
       if (gameCleared) {
         rankingSubmitBoxEl.classList.add("active");
-        rankingFinalScoreEl.innerHTML = `클리어 기록: <b class="score">${score}</b>점 · 클리어 시각 ${clearTimeText || "-"} · 뭉가 성공 ${thornSuccessCount}회`;
+        rankingFinalScoreEl.innerHTML = `클리어 기록: <b class="score">${score}</b>점 · 클리어 시각 ${clearTimeText || "-"} · 소요 ${formatElapsedTime(clearDurationMs)} · 뭉가 성공 ${thornSuccessCount}회`;
         rankingSubmitBtn.disabled = rankingSubmitted;
         rankingSubmitBtn.textContent = rankingSubmitted ? "등록 완료" : "랭킹 등록";
       } else {
@@ -1603,8 +1585,8 @@
           <div class="ranking-rank">#${index + 1}</div>
           <div class="ranking-name">${sanitizeRankingName(row.name) || "익명"}</div>
           <div class="ranking-score">${row.score}점</div>
-          <div class="ranking-clear-time">${formatRankingDisplayTime(row.clearTime)}</div>
-          <div class="ranking-thorn-count">🌵${row.thornSuccessCount || 0}</div>
+          <div class="ranking-clear-time">🕒 ${formatRankingTime(row.clearTime)}</div>
+          <div class="ranking-thorn-count">🌵 ${row.thornSuccessCount || 0}</div>
         </div>
       `).join("");
     }
@@ -1626,7 +1608,7 @@
 
       rankingSubmitted = true;
       updateRankingSubmitBox();
-      setRankingMessage("서버에 등록 중입니다... 게임 화면은 멈추지 않습니다.");
+      setRankingMessage("랭킹 등록 중... 게임 화면은 멈추지 않습니다.");
 
       const body = new URLSearchParams({
         action: "submit",
@@ -1645,7 +1627,7 @@
           headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
           body
         });
-        setRankingMessage("등록 요청 완료! 실제 반영까지 잠깐 걸릴 수 있습니다.");
+        setRankingMessage("등록 요청 완료! 서버 반영은 잠깐 걸릴 수 있습니다.");
       } catch (error) {
         rankingSubmitted = false;
         updateRankingSubmitBox();
@@ -1668,7 +1650,7 @@
         renderRankingRows(rows);
         setRankingMessage(`${label}을 불러왔습니다. 자동 새로고침은 하지 않습니다.`);
       } catch (error) {
-        setRankingMessage("랭킹 조회 실패. 서버 응답을 확인해야 합니다.", true);
+        setRankingMessage("랭킹 조회 실패. 서버가 JSON 응답을 지원하는지 확인해야 합니다.", true);
       } finally {
         buttons.forEach(btn => btn.disabled = false);
       }
@@ -1904,7 +1886,7 @@
       enemyEmojiEl.textContent = gameCleared ? "🏆" : gameOver ? "💀" : stage.emoji;
       enemyNameEl.textContent = gameCleared ? "게임 클리어" : gameOver ? "게임 종료" : stage.name;
       enemyStateEl.textContent = gameCleared
-        ? `최종 스코어 ${score} · 클리어 시각 ${clearTimeText || "-"} · 소요 ${formatElapsedTime(clearDurationMs)}`
+        ? CLEAR_NOTICE
         : gameOver
           ? `최종 스코어 ${score}`
           : `기본 ${data.baseDamage} + 시너지 ${data.synergyDamage}`;
@@ -2164,9 +2146,12 @@
           gameOver = true;
           clearTimeText = formatCurrentTime();
           clearDurationMs = Date.now() - gameStartedAt;
-          addLog(`🏆 <span class="win">최종 클리어!</span> 이름을 입력하고 랭킹 등록을 누르면 서버에 기록됩니다.<br>클리어 시각 <b>${clearTimeText}</b> · 소요 <b>${formatElapsedTime(clearDurationMs)}</b> · 뭉가 성공 <b>${thornSuccessCount}</b>회`);
-          setRankingMessage("클리어 완료! 이름을 입력하고 랭킹 등록을 눌러주세요.");
-          setTimeout(() => rankingNameInputEl?.focus(), 120);
+          addLog(`🏆 <span class="win">${CLEAR_NOTICE}</span><br>클리어 시각 <b>${clearTimeText}</b> · 소요 <b>${formatElapsedTime(clearDurationMs)}</b> · 뭉가 성공 <b>${thornSuccessCount}</b>회`);
+          setRankingMessage(CLEAR_NOTICE);
+          setTimeout(() => {
+            alert(CLEAR_NOTICE);
+            rankingNameInputEl?.focus();
+          }, 120);
         }
       } else {
         gameOver = true;
@@ -2180,6 +2165,51 @@
       render();
     }
 
+
+    function resetGame() {
+      gold = START_GOLD;
+      ownedCards = [];
+      selectedIndex = null;
+      stageIndex = 0;
+      score = 0;
+      gameOver = false;
+      gameCleared = false;
+      clearTimeText = "";
+      clearDurationMs = 0;
+      gameStartedAt = Date.now();
+      rankingSubmitted = false;
+      if (rankingNameInputEl) rankingNameInputEl.value = "";
+      if (rankingListEl) rankingListEl.innerHTML = "";
+      setRankingMessage("랭킹은 버튼을 눌렀을 때만 불러옵니다.");
+      thornSuccessCount = 0;
+      thornFailCount = 0;
+      saveThornCounts();
+      if (thornCheckEl) thornCheckEl.checked = false;
+      logEl.innerHTML = "";
+      addLog("새 게임 시작. Sea Of Milkyway 🌌 뭉가 성공/실패 내역도 초기화되었습니다.");
+      render();
+    }
+
+    cardsEl.addEventListener("touchstart", event => {
+      cardTouchStartY = event.touches[0].clientY;
+      cardTouchMoved = false;
+    }, { passive: true });
+
+    cardsEl.addEventListener("touchmove", event => {
+      const diffY = Math.abs(event.touches[0].clientY - cardTouchStartY);
+      if (diffY > 8) {
+        cardTouchMoved = true;
+        ignoreNextCardClick = true;
+      }
+    }, { passive: true });
+
+    cardsEl.addEventListener("touchend", () => {
+      if (cardTouchMoved) {
+        setTimeout(() => {
+          ignoreNextCardClick = false;
+        }, 140);
+      }
+    }, { passive: true });
 
     drawBtn.addEventListener("click", drawCard);
     battleBtn.addEventListener("click", battle);
