@@ -608,6 +608,31 @@
       }
     }
 
+
+    .thorn-damage-preview {
+      margin-top: -4px;
+      padding: 8px 11px;
+      border-radius: 13px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 850;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+    }
+
+    .thorn-damage-preview .success-dmg {
+      color: #ffe182;
+      font-weight: 950;
+    }
+
+    .thorn-damage-preview .fail-dmg {
+      color: #ff91ac;
+      font-weight: 950;
+    }
+
     .thorn-option {
       display: flex;
       align-items: center;
@@ -970,6 +995,11 @@
           <span><b>뭉툭한가시</b> <span class="thorn-desc">[10%확률로 데미지+10%, 90%확률로 -20%. 뭉가 성공시 10G획득]</span></span>
         </label>
 
+        <div class="thorn-damage-preview">
+          <span>뭉가성공대미지: <span class="success-dmg" id="thornSuccessDamage">0</span></span>
+          <span>뭉가실패대미지: <span class="fail-dmg" id="thornFailDamage">0</span></span>
+        </div>
+
         <div class="battle-actions">
           <button class="battle-btn" id="battleBtn">전투 시작</button>
           <button class="reset-btn" id="resetBtn">리셋</button>
@@ -1102,6 +1132,8 @@
     const resetBtn = document.getElementById("resetBtn");
     const sideResetBtn = document.getElementById("sideResetBtn");
     const thornCheckEl = document.getElementById("thornCheck");
+    const thornSuccessDamageEl = document.getElementById("thornSuccessDamage");
+    const thornFailDamageEl = document.getElementById("thornFailDamage");
     const thornSuccessEffectEl = document.getElementById("thornSuccessEffect");
     const thornFailEffectEl = document.getElementById("thornFailEffect");
     const thornRouletteEl = document.getElementById("thornRoulette");
@@ -1317,6 +1349,8 @@
 
       goldEl.textContent = gold;
       battleDamageEl.textContent = data.totalDamage;
+      if (thornSuccessDamageEl) thornSuccessDamageEl.textContent = Math.floor(data.totalDamage * 1.10);
+      if (thornFailDamageEl) thornFailDamageEl.textContent = Math.floor(data.totalDamage * 0.8);
       stageNoEl.textContent = Math.min(stageIndex + 1, stages.length);
       scoreEl.textContent = score;
 
