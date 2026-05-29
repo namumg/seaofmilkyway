@@ -227,7 +227,7 @@
     .enemy-name {
       font-size: 25px;
       font-weight: 950;
-      line-height: 1.15;
+      line-height: 1.10;
       letter-spacing: -0.4px;
     }
 
@@ -295,6 +295,347 @@
       background: linear-gradient(90deg, #ff91ac, #ffd957, #79ffbd);
       border-radius: 999px;
       transition: width 0.2s ease;
+    }
+
+
+
+
+
+    .thorn-roulette {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      place-items: center;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255,217,87,0.22), transparent 23%),
+        radial-gradient(circle at 42% 56%, rgba(255,80,130,0.16), transparent 26%),
+        rgba(5, 6, 18, 0.58);
+      backdrop-filter: blur(3px);
+    }
+
+    .thorn-roulette.active {
+      display: grid;
+    }
+
+    .roulette-card {
+      min-width: 360px;
+      max-width: 90vw;
+      padding: 24px 28px;
+      border-radius: 28px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.18), transparent 36%),
+        linear-gradient(145deg, rgba(24,27,52,0.98), rgba(55,28,70,0.97));
+      border: 2px solid rgba(255,255,255,0.22);
+      box-shadow:
+        0 0 38px rgba(255,217,87,0.18),
+        0 22px 80px rgba(0,0,0,0.55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .roulette-card::before {
+      content: "";
+      position: absolute;
+      inset: -80px;
+      background: conic-gradient(
+        from 0deg,
+        transparent,
+        rgba(255,217,87,0.16),
+        transparent,
+        rgba(121,255,189,0.13),
+        transparent,
+        rgba(255,91,172,0.14),
+        transparent
+      );
+      animation: rouletteAura 1.2s linear infinite;
+    }
+
+    .roulette-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .roulette-title {
+      font-size: 20px;
+      font-weight: 950;
+      color: #ffe9a1;
+      margin-bottom: 16px;
+    }
+
+    .roulette-window {
+      height: 78px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      background: rgba(0,0,0,0.30);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: inset 0 0 22px rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    .roulette-word {
+      font-size: 42px;
+      font-weight: 1000;
+      letter-spacing: -1px;
+      transform: scale(1);
+    }
+
+    .roulette-word.spin {
+      animation: rouletteWordSpin 0.18s ease infinite;
+    }
+
+    .roulette-word.success {
+      color: #ffe182;
+      text-shadow: 0 0 18px rgba(255,217,87,0.78);
+      animation: rouletteSuccessPop 0.85s cubic-bezier(.16,1.35,.32,1) forwards;
+    }
+
+    .roulette-word.fail {
+      color: #ff91ac;
+      text-shadow: 0 0 18px rgba(255,80,130,0.70);
+      animation: rouletteFailPop 0.85s cubic-bezier(.16,1.2,.32,1) forwards;
+    }
+
+    .roulette-sub {
+      margin-top: 14px;
+      color: #d8d8f5;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @keyframes rouletteAura {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rouletteWordSpin {
+      0% { transform: translateY(-3px) scale(0.98); filter: blur(0.5px); }
+      50% { transform: translateY(3px) scale(1.03); filter: blur(1px); }
+      100% { transform: translateY(-3px) scale(0.98); filter: blur(0.5px); }
+    }
+
+    @keyframes rouletteSuccessPop {
+      0% { transform: scale(0.6) rotate(-7deg); opacity: 0; }
+      28% { transform: scale(1.25) rotate(3deg); opacity: 1; }
+      56% { transform: scale(0.96) rotate(-1deg); }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    @keyframes rouletteFailPop {
+      0% { transform: scale(0.6) rotate(7deg); opacity: 0; }
+      25% { transform: scale(1.18) rotate(-3deg); opacity: 1; }
+      55% { transform: scale(0.96) rotate(1deg); }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    @media (max-width: 720px) {
+      .roulette-card {
+        min-width: 0;
+        width: 88vw;
+        padding: 20px;
+      }
+
+      .roulette-word {
+        font-size: 34px;
+      }
+    }
+
+    .thorn-fail-effect {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      display: none;
+      place-items: center;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(120, 120, 140, 0.22), transparent 24%),
+        radial-gradient(circle at 48% 52%, rgba(255, 80, 110, 0.16), transparent 28%);
+      animation: thornFailScreen 1.05s ease forwards;
+    }
+
+    .thorn-fail-effect.active {
+      display: grid;
+    }
+
+    .thorn-fail-text {
+      padding: 18px 30px;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(70,70,88,0.96), rgba(160,45,78,0.92));
+      color: #fff;
+      font-size: 38px;
+      font-weight: 1000;
+      letter-spacing: -1px;
+      border: 3px solid rgba(255,255,255,0.55);
+      box-shadow:
+        0 0 26px rgba(255,80,110,0.45),
+        0 18px 55px rgba(0,0,0,0.45);
+      transform: scale(0.35) rotate(5deg);
+      animation: thornFailText 1.05s cubic-bezier(.16,1.2,.32,1) forwards;
+    }
+
+    @keyframes thornFailScreen {
+      0% { opacity: 0; }
+      14% { opacity: 1; }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes thornFailText {
+      0% { opacity: 0; transform: scale(0.35) rotate(8deg); }
+      22% { opacity: 1; transform: scale(1.10) rotate(-3deg); }
+      42% { transform: scale(0.96) rotate(1deg); }
+      76% { opacity: 1; transform: scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: scale(0.9) rotate(0deg); }
+    }
+
+    @media (max-width: 720px) {
+      .thorn-fail-text {
+        font-size: 28px;
+        padding: 16px 22px;
+      }
+    }
+
+    .thorn-success-effect {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      place-items: center;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 217, 87, 0.26), transparent 22%),
+        radial-gradient(circle at 38% 42%, rgba(121,255,189,0.22), transparent 20%),
+        radial-gradient(circle at 62% 55%, rgba(255, 91, 172, 0.20), transparent 22%);
+      animation: thornScreenFlash 1.35s ease forwards;
+    }
+
+    .thorn-success-effect.active {
+      display: grid;
+    }
+
+    .thorn-success-text {
+      position: relative;
+      padding: 22px 34px;
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(255,217,87,0.96), rgba(255,91,172,0.94), rgba(121,255,189,0.92));
+      color: #111324;
+      font-size: 42px;
+      font-weight: 1000;
+      letter-spacing: -1.3px;
+      text-shadow: 0 2px 0 rgba(255,255,255,0.25);
+      border: 3px solid rgba(255,255,255,0.85);
+      box-shadow:
+        0 0 28px rgba(255,217,87,0.75),
+        0 0 70px rgba(255,91,172,0.55),
+        0 20px 70px rgba(0,0,0,0.42);
+      transform: scale(0.2) rotate(-8deg);
+      animation: thornTextPop 1.35s cubic-bezier(.16,1.4,.32,1) forwards;
+    }
+
+    .thorn-success-text::before,
+    .thorn-success-text::after {
+      content: "✦ ✧ ✦";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: 28px;
+      letter-spacing: 10px;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,0.9));
+      animation: thornSparkle 1.35s ease forwards;
+    }
+
+    .thorn-success-text::before {
+      top: -42px;
+    }
+
+    .thorn-success-text::after {
+      bottom: -42px;
+    }
+
+    .thorn-burst {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.82);
+      box-shadow:
+        0 0 35px rgba(255,255,255,0.75),
+        inset 0 0 35px rgba(255,255,255,0.45);
+      animation: thornBurst 1.35s ease forwards;
+    }
+
+    @keyframes thornScreenFlash {
+      0% { opacity: 0; backdrop-filter: blur(0px); }
+      12% { opacity: 1; backdrop-filter: blur(2px); }
+      78% { opacity: 1; }
+      100% { opacity: 0; backdrop-filter: blur(0px); }
+    }
+
+    @keyframes thornTextPop {
+      0% { opacity: 0; transform: scale(0.2) rotate(-10deg); }
+      18% { opacity: 1; transform: scale(1.22) rotate(3deg); }
+      35% { transform: scale(0.96) rotate(-1deg); }
+      55% { transform: scale(1.04) rotate(0deg); }
+      82% { opacity: 1; transform: scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: scale(1.18) rotate(0deg); }
+    }
+
+    @keyframes thornSparkle {
+      0% { opacity: 0; transform: translateX(-50%) scale(0.3); }
+      20% { opacity: 1; transform: translateX(-50%) scale(1.25); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.6); }
+    }
+
+    @keyframes thornBurst {
+      0% { opacity: 0; transform: scale(0.15); }
+      20% { opacity: 1; transform: scale(0.55); }
+      100% { opacity: 0; transform: scale(2.2); }
+    }
+
+    @media (max-width: 720px) {
+      .thorn-success-text {
+        font-size: 28px;
+        padding: 18px 22px;
+      }
+      .thorn-burst {
+        width: 210px;
+        height: 210px;
+      }
+    }
+
+    .thorn-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 11px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 13px;
+      color: #e9e9ff;
+      user-select: none;
+    }
+
+    .thorn-option input {
+      width: 16px;
+      height: 16px;
+      accent-color: #ff91ac;
+      cursor: pointer;
+    }
+
+    .thorn-option b {
+      color: #ffd957;
+    }
+
+    .thorn-desc {
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .battle-actions {
@@ -624,6 +965,11 @@
           <div class="progress" id="damageProgress"></div>
         </div>
 
+        <label class="thorn-option">
+          <input type="checkbox" id="thornCheck">
+          <span><b>뭉툭한가시</b> <span class="thorn-desc">[10%확률로 데미지+10%, 90%확률로 -20%. 뭉가 성공시 10G획득]</span></span>
+        </label>
+
         <div class="battle-actions">
           <button class="battle-btn" id="battleBtn">전투 시작</button>
           <button class="reset-btn" id="resetBtn">리셋</button>
@@ -695,18 +1041,18 @@
     ];
 
     const synergyRules = {
-      "애니츠": [{ count: 2, damage: 10 }, { count: 5, damage: 50 }],
-      "실린": [{ count: 2, damage: 10 }, { count: 4, damage: 30 }],
-      "요즈": [{ count: 3, damage: 20 }],
-      "슈샤": [{ count: 3, damage: 20 }],
-      "헌터": [{ count: 3, damage: 20 }],
-      "데런": [{ count: 2, damage: 4 }, { count: 4, damage: 40 }],
-      "분석가": [{ count: 2, damage: 10 }, { count: 5, damage: 50 }],
-      "유망주": [{ count: 3, damage: 30 }],
-      "르세라핌": [{ count: 1, damage: 6 }, { count: 3, damage: 16 }, { count: 5, damage: 50 }],
-      "우상향": [{ count: 2, damage: 20 }],
-      "노인": [{ count: 3, damage: 30 }],
-      "원피스": [{ count: 2, damage: 4 }, { count: 4, damage: 40 }]
+      "애니츠": [{ count: 2, damage: 12 }, { count: 5, damage: 60 }],
+      "실린": [{ count: 2, damage: 12 }, { count: 4, damage: 36 }],
+      "요즈": [{ count: 3, damage: 24 }],
+      "슈샤": [{ count: 3, damage: 24 }],
+      "헌터": [{ count: 3, damage: 24 }],
+      "데런": [{ count: 2, damage: 5 }, { count: 4, damage: 48 }],
+      "분석가": [{ count: 2, damage: 12 }, { count: 5, damage: 60 }],
+      "유망주": [{ count: 3, damage: 36 }],
+      "르세라핌": [{ count: 1, damage: 8 }, { count: 3, damage: 20 }, { count: 5, damage: 60 }],
+      "우상향": [{ count: 2, damage: 24 }],
+      "노인": [{ count: 3, damage: 36 }],
+      "원피스": [{ count: 2, damage: 5 }, { count: 4, damage: 48 }]
     };
 
     const stages = [
@@ -755,6 +1101,12 @@
     const mergeBtn = document.getElementById("mergeBtn");
     const resetBtn = document.getElementById("resetBtn");
     const sideResetBtn = document.getElementById("sideResetBtn");
+    const thornCheckEl = document.getElementById("thornCheck");
+    const thornSuccessEffectEl = document.getElementById("thornSuccessEffect");
+    const thornFailEffectEl = document.getElementById("thornFailEffect");
+    const thornRouletteEl = document.getElementById("thornRoulette");
+    const rouletteWordEl = document.getElementById("rouletteWord");
+    const rouletteSubEl = document.getElementById("rouletteSub");
 
     function addLog(message) {
       const p = document.createElement("p");
@@ -774,6 +1126,20 @@
       if (grade === "gold") return "황금";
       if (grade === "purple") return "보라";
       return "일반";
+    }
+
+    function getGradeOrder(grade) {
+      if (grade === "gold") return 0;
+      if (grade === "purple") return 1;
+      return 2;
+    }
+
+    function sortOwnedCards() {
+      ownedCards.sort((a, b) =>
+        a.name.localeCompare(b.name, "ko") ||
+        getGradeOrder(a.grade) - getGradeOrder(b.grade) ||
+        a.id - b.id
+      );
     }
 
     function getSellReward(grade) {
@@ -804,7 +1170,7 @@
 
       rules.forEach((rule, index) => {
         if (count >= rule.count) {
-          damage = rule.damage;
+          damage = Math.ceil(rule.damage);
           level = index + 1;
         }
       });
@@ -1004,7 +1370,9 @@
       const original = cardPool[Math.floor(Math.random() * cardPool.length)];
       const card = makeCard(original, "normal");
       ownedCards.push(card);
-      selectedIndex = ownedCards.length - 1;
+
+      sortOwnedCards();
+      selectedIndex = ownedCards.indexOf(card);
 
       addLog(`🎴 <b>${card.name}</b> 획득! <span class="muted">${card.a} / ${card.b}</span>`);
       render();
@@ -1043,7 +1411,8 @@
 
       const merged = makeCard(selected, nextGrade);
       ownedCards.push(merged);
-      selectedIndex = ownedCards.length - 1;
+      sortOwnedCards();
+      selectedIndex = ownedCards.indexOf(merged);
 
       if (nextGrade === "gold") {
         addLog(`🌟 <b>${selected.name}</b> 보라카드 3장 합성! <span class="win">황금카드 완성 · 데미지 160</span>`);
@@ -1052,6 +1421,61 @@
       }
 
       render();
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function playThornRoulette(thornSuccess) {
+      if (!thornRouletteEl || !rouletteWordEl || !rouletteSubEl) return;
+
+      thornRouletteEl.classList.add("active");
+      rouletteWordEl.className = "roulette-word spin";
+      rouletteSubEl.textContent = "10% 성공 / 90% 실패 룰렛 진행 중...";
+      const words = ["성공", "실패"];
+      let tick = 0;
+
+      const interval = setInterval(() => {
+        rouletteWordEl.textContent = words[tick % 2];
+        tick += 1;
+      }, 110);
+
+      await sleep(1350);
+      clearInterval(interval);
+
+      rouletteWordEl.textContent = thornSuccess ? "성공!" : "실패...";
+      rouletteWordEl.className = "roulette-word " + (thornSuccess ? "success" : "fail");
+      rouletteSubEl.textContent = thornSuccess
+        ? "뭉툭한가시 성공! 데미지 +10%, 10골드 획득!"
+        : "뭉가실패... 데미지 -20%";
+
+      await sleep(950);
+      thornRouletteEl.classList.remove("active");
+    }
+
+    function showThornSuccessEffect() {
+      if (!thornSuccessEffectEl) return;
+
+      thornSuccessEffectEl.classList.remove("active");
+      void thornSuccessEffectEl.offsetWidth;
+      thornSuccessEffectEl.classList.add("active");
+
+      setTimeout(() => {
+        thornSuccessEffectEl.classList.remove("active");
+      }, 1450);
+    }
+
+    function showThornFailEffect() {
+      if (!thornFailEffectEl) return;
+
+      thornFailEffectEl.classList.remove("active");
+      void thornFailEffectEl.offsetWidth;
+      thornFailEffectEl.classList.add("active");
+
+      setTimeout(() => {
+        thornFailEffectEl.classList.remove("active");
+      }, 1150);
     }
 
     function playBattleAnimation(totalDamage, isWin) {
@@ -1078,7 +1502,7 @@
       }, 950);
     }
 
-    function battle() {
+    async function battle() {
       if (gameOver) return;
 
       if (ownedCards.length === 0) {
@@ -1088,13 +1512,36 @@
 
       const data = getDamageBreakdown();
       const stage = stages[Math.min(stageIndex, stages.length - 1)];
-      const isWin = data.totalDamage >= stage.hp;
 
-      playBattleAnimation(data.totalDamage, isWin);
+      let battleDamage = data.totalDamage;
+      let thornText = "";
+
+      battleBtn.disabled = true;
+
+      if (thornCheckEl && thornCheckEl.checked) {
+        const thornSuccess = Math.random() < 0.1;
+
+        await playThornRoulette(thornSuccess);
+
+        if (thornSuccess) {
+          battleDamage = Math.floor(battleDamage * 1.10);
+          gold += 10;
+          thornText = `<br>🌵 뭉툭한가시 성공! 데미지 +10% → <b>${battleDamage}</b> · <b>+10G</b>`;
+          showThornSuccessEffect();
+        } else {
+          battleDamage = Math.floor(battleDamage * 0.8);
+          thornText = `<br>🌵 뭉가실패... 데미지 -20% → <b>${battleDamage}</b>`;
+          showThornFailEffect();
+        }
+      }
+
+      const isWin = battleDamage >= stage.hp;
+
+      playBattleAnimation(battleDamage, isWin);
 
       if (isWin) {
         gold += stage.reward;
-        const overDamage = data.totalDamage - stage.hp;
+        const overDamage = battleDamage - stage.hp;
         score += overDamage;
 
         const activeText = data.activeSynergies.length
@@ -1104,7 +1551,7 @@
         addLog(`
           ⚔️ <span class="win">승리!</span>
           ${stage.name} 클리어 · 보상 <b>${stage.reward}G</b>
-          <br>오버 데미지 <b>${overDamage}</b> · 스코어 <b>+${overDamage}</b>
+          <br>오버 데미지 <b>${overDamage}</b> · 스코어 <b>+${overDamage}</b>${thornText}
           <br>발동 시너지: <b>${activeText}</b>
         `);
 
@@ -1117,7 +1564,7 @@
         gameOver = true;
         addLog(`
           💀 <span class="lose">패배 · 게임 종료</span>
-          <br>총 데미지 <b>${data.totalDamage}</b> / 필요 데미지 <b>${stage.hp}</b>
+          <br>총 데미지 <b>${battleDamage}</b> / 필요 데미지 <b>${stage.hp}</b>${thornText}
           <br>최종 스코어: <b>${score}</b>
         `);
       }
@@ -1147,5 +1594,29 @@
     addLog("Sea Of Milkyway 시작. 카드를 뽑아 은하를 항해하세요 🌌");
     render();
   </script>
+
+
+
+  <div class="thorn-roulette" id="thornRoulette">
+    <div class="roulette-card">
+      <div class="roulette-inner">
+        <div class="roulette-title">🌵 뭉툭한가시 룰렛</div>
+        <div class="roulette-window">
+          <div class="roulette-word spin" id="rouletteWord">성공</div>
+        </div>
+        <div class="roulette-sub" id="rouletteSub">10% 확률로 성공하면 데미지 +10%와 10골드를 얻습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="thorn-fail-effect" id="thornFailEffect">
+    <div class="thorn-fail-text">🌵 뭉가실패...</div>
+  </div>
+
+  <div class="thorn-success-effect" id="thornSuccessEffect">
+    <div class="thorn-burst"></div>
+    <div class="thorn-success-text">🌵 뭉툭한가시 성공!</div>
+  </div>
+
 </body>
 </html>
