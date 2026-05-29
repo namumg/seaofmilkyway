@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sea Of Milkyway</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 16px;
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 24%),
+        radial-gradient(circle at 78% 18%, rgba(255, 90, 150, 0.13), transparent 22%),
+        radial-gradient(circle at 50% 88%, rgba(110, 180, 255, 0.10), transparent 28%),
+        linear-gradient(135deg, #101424, #070917 54%, #251034);
+    }
+
+    .game {
+      max-width: 1260px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 12px;
+    }
+
+    .title-box {
+      border-radius: 20px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: -0.8px;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 520px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      border-radius: 20px;
+      padding: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+    }
+
+    .battle-panel {
+      display: grid;
+      gap: 10px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,217,87,0.16), transparent 24%),
+        radial-gradient(circle at 20% 100%, rgba(255,80,130,0.10), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.06));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .battle-panel::before {
+      content: "⚔️";
+      position: absolute;
+      right: 18px;
+      top: 12px;
+      font-size: 40px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .battle-arena {
+      position: relative;
+    }
+
+    .enemy-strip.hit {
+      animation: enemyHit 0.42s ease;
+    }
+
+    .enemy-strip.attack-ready {
+      animation: battlePulse 0.7s ease;
+    }
+
+    .slash-effect {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 5;
+    }
+
+    .slash-effect.active {
+      opacity: 1;
+      animation: slashFade 0.62s ease forwards;
+    }
+
+    .slash-effect::before,
+    .slash-effect::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      top: 50%;
+      width: 68%;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.95), rgba(255,80,130,0.95), transparent);
+      box-shadow: 0 0 20px rgba(255,90,150,0.72);
+      transform: rotate(-18deg);
+    }
+
+    .slash-effect::after {
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), rgba(121,255,189,0.86), transparent);
+      box-shadow: 0 0 20px rgba(121,255,189,0.55);
+    }
+
+    .damage-pop {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 6;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 77, 131, 0.90);
+      color: #fff;
+      font-weight: 950;
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(8px) scale(0.9);
+      pointer-events: none;
+    }
+
+    .damage-pop.active {
+      animation: damagePop 0.85s ease forwards;
+    }
+
+    @keyframes enemyHit {
+      0% { transform: translateX(0); filter: brightness(1); }
+      18% { transform: translateX(-8px) rotate(-1deg); filter: brightness(1.45); }
+      36% { transform: translateX(8px) rotate(1deg); }
+      54% { transform: translateX(-5px) rotate(-0.5deg); }
+      72% { transform: translateX(4px); }
+      100% { transform: translateX(0); filter: brightness(1); }
+    }
+
+    @keyframes battlePulse {
+      0% { box-shadow: inset 0 0 24px rgba(255,255,255,0.05), 0 14px 28px rgba(0,0,0,0.18); }
+      45% { box-shadow: inset 0 0 30px rgba(255,255,255,0.10), 0 0 38px rgba(255,77,131,0.25); }
+      100% { box-shadow: inset 0 0 24px rgba(255,255,255,0.05), 0 14px 28px rgba(0,0,0,0.18); }
+    }
+
+    @keyframes slashFade {
+      0% { opacity: 0; transform: scale(0.92); }
+      18% { opacity: 1; transform: scale(1.03); }
+      100% { opacity: 0; transform: scale(1.12); }
+    }
+
+    @keyframes damagePop {
+      0% { opacity: 0; transform: translateY(8px) scale(0.9); }
+      18% { opacity: 1; transform: translateY(0) scale(1.08); }
+      72% { opacity: 1; transform: translateY(-18px) scale(1); }
+      100% { opacity: 0; transform: translateY(-28px) scale(0.95); }
+    }
+
+    .enemy-strip {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 124px;
+      padding: 14px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10), transparent 45%),
+        linear-gradient(135deg, rgba(255,95,143,0.24), rgba(95,124,255,0.16));
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: inset 0 0 24px rgba(255,255,255,0.05), 0 14px 28px rgba(0,0,0,0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .enemy-strip::after {
+      content: "";
+      position: absolute;
+      inset: auto -30px -30px auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .enemy-emoji {
+      font-size: 72px;
+      width: 92px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.20), transparent 35%),
+        rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.16);
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.28));
+      box-shadow: 0 0 24px rgba(255,100,160,0.12);
+    }
+
+    .enemy-name {
+      font-size: 25px;
+      font-weight: 950;
+      line-height: 1.15;
+      letter-spacing: -0.4px;
+    }
+
+    .enemy-state {
+      margin-top: 6px;
+      color: #d4d5f5;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .battle-banner {
+      margin-bottom: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #ffe9a1;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .battle-info-bar {
+      padding: 10px 12px;
+      border-radius: 16px;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.26), rgba(255,255,255,0.05), rgba(0,0,0,0.26));
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      box-shadow: inset 0 0 16px rgba(255,255,255,0.03);
+    }
+
+    .battle-info-item {
+      white-space: nowrap;
+    }
+
+    .label {
+      color: #c9c9ea;
+      margin-right: 4px;
+    }
+
+    .gold { color: #ffd957; font-weight: 950; }
+    .damage { color: #ff91ac; font-weight: 950; }
+    .stage { color: #93d6ff; font-weight: 950; }
+    .score { color: #79ffbd; font-weight: 950; }
+
+    .progress-wrap {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.11);
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.18);
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff91ac, #ffd957, #79ffbd);
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+
+    .battle-actions {
+      display: grid;
+      grid-template-columns: 1fr 0.72fr;
+      gap: 8px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    button:active { transform: translateY(1px); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .battle-btn { background: linear-gradient(135deg, #ff4d83, #895dff); }
+    .draw-btn { background: linear-gradient(135deg, #ff9f3f, #ff4d83); }
+    .sell-btn { background: linear-gradient(135deg, #2ccc85, #00a37d); }
+    .merge-btn { background: linear-gradient(135deg, #a55cff, #6247ff); }
+    .reset-btn {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.24);
+    }
+
+    .log {
+      min-height: 72px;
+      max-height: 115px;
+      overflow-y: auto;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.11);
+      color: #ececff;
+      line-height: 1.45;
+      font-size: 12px;
+    }
+
+    .log p { margin: 0 0 8px; }
+    .win { color: #7affbd; font-weight: 950; }
+    .lose { color: #ff91ac; font-weight: 950; }
+    .muted { color: #c5c5e7; }
+
+    .side-grid {
+      display: grid;
+      gap: 14px;
+      width: 520px;
+      min-width: 520px;
+      max-width: 520px;
+      overflow: hidden;
+    }
+
+    .gold-box {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 15px;
+      background: rgba(255, 217, 87, 0.12);
+      border: 1px solid rgba(255, 217, 87, 0.32);
+    }
+
+    .gold-label {
+      font-size: 13px;
+      color: #ffe9a1;
+      font-weight: 850;
+    }
+
+    .gold-value {
+      font-size: 22px;
+      font-weight: 950;
+      color: #ffd957;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(6, 76px);
+      gap: 6px;
+      padding-right: 0;
+      justify-content: start;
+      align-content: start;
+      width: 100%;
+      max-width: 100%;
+      overflow: visible;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      width: 76px;
+      min-width: 76px;
+      max-width: 76px;
+      min-height: 64px;
+      padding: 7px 6px;
+      border-radius: 12px;
+      background: linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0.055));
+      border: 1px solid rgba(255,255,255,0.16);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .card.purple {
+      background: linear-gradient(160deg, rgba(185,112,255,0.34), rgba(95,62,210,0.14));
+      border-color: rgba(195,135,255,0.46);
+    }
+
+    .card.gold-card {
+      background: linear-gradient(160deg, rgba(255,217,87,0.40), rgba(255,145,60,0.15));
+      border-color: rgba(255,217,87,0.62);
+      box-shadow: 0 0 20px rgba(255,217,87,0.10);
+    }
+
+    .card.mergeable {
+      box-shadow: 0 0 0 2px rgba(121,255,189,0.38) inset;
+      border-color: rgba(121,255,189,0.9);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.34);
+    }
+
+    .card.selected {
+      border-color: #ffffff;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.6), 0 12px 20px rgba(0,0,0,0.20);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .card-name {
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: -0.3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .grade {
+      flex: 0 0 auto;
+      padding: 1px 4px;
+      border-radius: 999px;
+      font-size: 9px;
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+    }
+
+    .card-tags {
+      margin-top: 6px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .tag {
+      display: block;
+      padding: 3px 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: #f1f1ff;
+      font-size: 10px;
+      font-weight: 850;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed rgba(255,255,255,0.28);
+      border-radius: 16px;
+      color: #bdbde7;
+      font-size: 13px;
+    }
+
+    .synergy-list {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 2px;
+      white-space: nowrap;
+      min-height: 44px;
+    }
+
+    .synergy-list::-webkit-scrollbar {
+      height: 7px;
+    }
+
+    .synergy-list::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.18);
+      border-radius: 999px;
+    }
+
+    .synergy {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(121,255,189,0.13);
+      border: 1px solid rgba(121,255,189,0.45);
+    }
+
+    .synergy.tier2 {
+      background: rgba(170, 105, 255, 0.16);
+      border-color: rgba(190, 135, 255, 0.65);
+      box-shadow: 0 0 14px rgba(170,105,255,0.10);
+    }
+
+    .synergy.tier3 {
+      background: rgba(255, 215, 87, 0.16);
+      border-color: rgba(255, 215, 87, 0.72);
+      box-shadow: 0 0 14px rgba(255,215,87,0.14);
+    }
+
+    .synergy-name {
+      font-weight: 950;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .synergy-desc {
+      color: #c9c9ee;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .synergy-dmg {
+      font-weight: 950;
+      color: #79ffbd;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .synergy.tier2 .synergy-name,
+    .synergy.tier2 .synergy-dmg {
+      color: #d6b0ff;
+    }
+
+    .synergy.tier3 .synergy-name,
+    .synergy.tier3 .synergy-dmg {
+      color: #ffe182;
+    }
+
+    @media (max-width: 1080px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .side-grid {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+      }
+      .cards { grid-template-columns: repeat(6, 76px); }
+      .synergy-list { max-height: none; }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 10px; }
+      h1 { font-size: 24px; }
+      .battle-actions, .controls { grid-template-columns: 1fr; }
+      .enemy-strip { min-height: 90px; }
+      .enemy-emoji { width: 70px; height: 70px; font-size: 54px; }
+      .enemy-name { font-size: 20px; }
+      .cards { grid-template-columns: repeat(4, 72px); }
+      .card { width: 72px; min-width: 72px; max-width: 72px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <header>
+      <div class="title-box">
+        <h1>Sea Of Milkyway</h1>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <section class="panel battle-panel">
+        <h2>전투</h2>
+
+        <div class="battle-arena">
+          <div class="enemy-strip" id="enemyStrip">
+            <div class="enemy-emoji" id="enemyEmoji">🪵</div>
+            <div>
+              <div class="battle-banner">⚔️ BATTLE MODE</div>
+              <div class="enemy-name" id="enemyName">1스테이지</div>
+              <div class="enemy-state" id="enemyState">전투 준비</div>
+            </div>
+          </div>
+          <div class="slash-effect" id="slashEffect"></div>
+          <div class="damage-pop" id="damagePop">HIT!</div>
+        </div>
+
+        <div class="battle-info-bar" id="battleInfoBar">
+          <span class="battle-info-item"><span class="label">필요</span><span id="enemyHp">10</span></span>
+          <span class="battle-info-item"><span class="label">내딜</span><span class="damage" id="battleDamage">0</span></span>
+          <span class="battle-info-item"><span class="label">스테이지</span><span class="stage" id="stageNo">1</span></span>
+          <span class="battle-info-item"><span class="label">스코어</span><span class="score" id="score">0</span></span>
+          <span class="battle-info-item"><span class="label">보상</span><span class="gold" id="rewardGold">53G</span></span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress" id="damageProgress"></div>
+        </div>
+
+        <div class="battle-actions">
+          <button class="battle-btn" id="battleBtn">전투 시작</button>
+          <button class="reset-btn" id="resetBtn">리셋</button>
+        </div>
+
+        <div class="log" id="log"></div>
+      </section>
+
+      <aside class="side-grid">
+        <section class="panel">
+          <h2>카드 관리</h2>
+
+          <div class="gold-box">
+            <div class="gold-label">보유골드</div>
+            <div class="gold-value"><span id="gold">15</span>G</div>
+          </div>
+
+          <div class="controls">
+            <button class="draw-btn" id="drawBtn">카드 뽑기 -5G</button>
+            <button class="sell-btn" id="sellBtn">선택 판매</button>
+            <button class="merge-btn" id="mergeBtn">선택 카드 합치기</button>
+            <button class="reset-btn" id="sideResetBtn">리셋</button>
+          </div>
+
+          <div class="cards" id="cards"></div>
+        </section>
+
+        <section class="panel">
+          <h2>발동 시너지</h2>
+          <div class="synergy-list" id="synergyList"></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const START_GOLD = 15;
+    const DRAW_COST = 5;
+
+    const SELL_REWARDS = {
+      normal: 3,
+      purple: 10,
+      gold: 35
+    };
+
+    const cardPool = [
+      { id: 1, name: "애콩", a: "실린", b: "르세라핌" },
+      { id: 2, name: "베타", a: "애니츠", b: "르세라핌" },
+      { id: 3, name: "우화", a: "실린", b: "분석가" },
+      { id: 4, name: "모구", a: "요즈", b: "르세라핌" },
+      { id: 5, name: "짜눙", a: "실린", b: "우상향" },
+      { id: 6, name: "원딜", a: "슈샤", b: "분석가" },
+      { id: 7, name: "정동", a: "데런", b: "분석가" },
+      { id: 8, name: "대령", a: "헌터", b: "분석가" },
+      { id: 9, name: "뀨상", a: "요즈", b: "노인" },
+      { id: 10, name: "민트", a: "애니츠", b: "분석가" },
+      { id: 11, name: "하웅", a: "애니츠", b: "노인" },
+      { id: 12, name: "꾸이", a: "애니츠", b: "르세라핌" },
+      { id: 13, name: "반반", a: "요즈", b: "르세라핌" },
+      { id: 14, name: "배지", a: "헌터", b: "노인" },
+      { id: 15, name: "뿌자", a: "헌터", b: "우상향" },
+      { id: 16, name: "벚꽃", a: "실린", b: "유망주" },
+      { id: 17, name: "삉삉", a: "슈샤", b: "원피스" },
+      { id: 18, name: "앵빵", a: "데런", b: "원피스" },
+      { id: 19, name: "카라", a: "데런", b: "원피스" },
+      { id: 20, name: "보폭", a: "데런", b: "원피스" },
+      { id: 21, name: "치피", a: "슈샤", b: "유망주" },
+      { id: 22, name: "성조", a: "애니츠", b: "유망주" }
+    ];
+
+    const synergyRules = {
+      "애니츠": [{ count: 2, damage: 10 }, { count: 5, damage: 50 }],
+      "실린": [{ count: 2, damage: 10 }, { count: 4, damage: 30 }],
+      "요즈": [{ count: 3, damage: 20 }],
+      "슈샤": [{ count: 3, damage: 20 }],
+      "헌터": [{ count: 3, damage: 20 }],
+      "데런": [{ count: 2, damage: 4 }, { count: 4, damage: 40 }],
+      "분석가": [{ count: 2, damage: 10 }, { count: 5, damage: 50 }],
+      "유망주": [{ count: 3, damage: 30 }],
+      "르세라핌": [{ count: 1, damage: 6 }, { count: 3, damage: 16 }, { count: 5, damage: 50 }],
+      "우상향": [{ count: 2, damage: 20 }],
+      "노인": [{ count: 3, damage: 30 }],
+      "원피스": [{ count: 2, damage: 4 }, { count: 4, damage: 40 }]
+    };
+
+    const stages = [
+      { name: "1스테이지", emoji: "🪵", hp: 10, reward: 13 },
+      { name: "2스테이지", emoji: "🟢", hp: 20, reward: 13 },
+      { name: "3스테이지", emoji: "👺", hp: 40, reward: 18 },
+      { name: "4스테이지", emoji: "🪓", hp: 60, reward: 18 },
+      { name: "5스테이지", emoji: "🐺", hp: 80, reward: 18 },
+      { name: "6스테이지", emoji: "🗿", hp: 100, reward: 18 },
+      { name: "7스테이지", emoji: "♞", hp: 200, reward: 23 },
+      { name: "8스테이지", emoji: "🐉", hp: 240, reward: 23 },
+      { name: "9스테이지", emoji: "🌊", hp: 300, reward: 23 },
+      { name: "10스테이지", emoji: "🌌", hp: 400, reward: 23 },
+      { name: "11스테이지", emoji: "🦑", hp: 500, reward: 23 },
+      { name: "12스테이지", emoji: "🐋", hp: 700, reward: 23 },
+      { name: "13스테이지", emoji: "👑", hp: 1000, reward: 23 }
+    ];
+
+    let gold = START_GOLD;
+    let ownedCards = [];
+    let selectedIndex = null;
+    let stageIndex = 0;
+    let score = 0;
+    let gameOver = false;
+
+    const goldEl = document.getElementById("gold");
+    const battleDamageEl = document.getElementById("battleDamage");
+    const stageNoEl = document.getElementById("stageNo");
+    const scoreEl = document.getElementById("score");
+    const cardsEl = document.getElementById("cards");
+    const synergyListEl = document.getElementById("synergyList");
+    const enemyStripEl = document.getElementById("enemyStrip");
+    const slashEffectEl = document.getElementById("slashEffect");
+    const damagePopEl = document.getElementById("damagePop");
+    const enemyEmojiEl = document.getElementById("enemyEmoji");
+    const enemyNameEl = document.getElementById("enemyName");
+    const enemyStateEl = document.getElementById("enemyState");
+    const enemyHpEl = document.getElementById("enemyHp");
+    const rewardGoldEl = document.getElementById("rewardGold");
+    const damageProgressEl = document.getElementById("damageProgress");
+    const logEl = document.getElementById("log");
+
+    const drawBtn = document.getElementById("drawBtn");
+    const battleBtn = document.getElementById("battleBtn");
+    const sellBtn = document.getElementById("sellBtn");
+    const mergeBtn = document.getElementById("mergeBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const sideResetBtn = document.getElementById("sideResetBtn");
+
+    function addLog(message) {
+      const p = document.createElement("p");
+      p.innerHTML = message;
+      logEl.prepend(p);
+    }
+
+    function makeCard(original, grade = "normal") {
+      return {
+        ...original,
+        grade,
+        damage: grade === "gold" ? 160 : grade === "purple" ? 40 : 5
+      };
+    }
+
+    function getGradeName(grade) {
+      if (grade === "gold") return "황금";
+      if (grade === "purple") return "보라";
+      return "일반";
+    }
+
+    function getSellReward(grade) {
+      return SELL_REWARDS[grade] || SELL_REWARDS.normal;
+    }
+
+    function countSynergies() {
+      const counts = {};
+      const countedCardNames = new Set();
+      Object.keys(synergyRules).forEach(name => counts[name] = 0);
+
+      ownedCards.forEach(card => {
+        // 같은 이름의 카드는 여러 장 있어도 시너지에는 1장으로만 계산합니다.
+        if (countedCardNames.has(card.name)) return;
+        countedCardNames.add(card.name);
+
+        counts[card.a] = (counts[card.a] || 0) + 1;
+        counts[card.b] = (counts[card.b] || 0) + 1;
+      });
+
+      return counts;
+    }
+
+    function getSynergyInfo(name, count) {
+      const rules = synergyRules[name] || [];
+      let damage = 0;
+      let level = 0;
+
+      rules.forEach((rule, index) => {
+        if (count >= rule.count) {
+          damage = rule.damage;
+          level = index + 1;
+        }
+      });
+
+      let tier = 0;
+      if (level >= 1) tier = 1;
+      if (level >= 2) tier = 2;
+      if (level >= 3) tier = 3;
+
+      return { damage, level, tier };
+    }
+
+    function getDamageBreakdown() {
+      const baseDamage = ownedCards.reduce((sum, card) => sum + card.damage, 0);
+      const counts = countSynergies();
+      let synergyDamage = 0;
+      const activeSynergies = [];
+
+      Object.keys(synergyRules).forEach(name => {
+        const count = counts[name] || 0;
+        const info = getSynergyInfo(name, count);
+        if (info.damage > 0) {
+          synergyDamage += info.damage;
+          activeSynergies.push({
+            name,
+            count,
+            damage: info.damage,
+            level: info.level,
+            tier: info.tier
+          });
+        }
+      });
+
+      activeSynergies.sort((a, b) =>
+        b.tier - a.tier ||
+        b.damage - a.damage ||
+        b.count - a.count ||
+        a.name.localeCompare(b.name, "ko")
+      );
+
+      return {
+        baseDamage,
+        synergyDamage,
+        totalDamage: baseDamage + synergyDamage,
+        activeSynergies,
+        counts
+      };
+    }
+
+    function getSameGradeSameIdCards(card) {
+      return ownedCards
+        .map((c, index) => ({ card: c, index }))
+        .filter(item => item.card.id === card.id && item.card.grade === card.grade);
+    }
+
+    function isMergeable(card) {
+      if (!card || card.grade === "gold") return false;
+      return getSameGradeSameIdCards(card).length >= 3;
+    }
+
+    function getMergeInfo() {
+      if (selectedIndex === null || !ownedCards[selectedIndex]) return null;
+
+      const selected = ownedCards[selectedIndex];
+      if (selected.grade === "gold") return null;
+
+      const sameCards = getSameGradeSameIdCards(selected);
+      if (sameCards.length < 3) return null;
+
+      return {
+        selected,
+        sameCards: sameCards.slice(0, 3),
+        nextGrade: selected.grade === "purple" ? "gold" : "purple"
+      };
+    }
+
+    function renderCards() {
+      cardsEl.innerHTML = "";
+
+      if (ownedCards.length === 0) {
+        cardsEl.innerHTML = '<div class="empty">아직 카드가 없습니다.</div>';
+        return;
+      }
+
+      ownedCards.forEach((card, index) => {
+        const mergeable = isMergeable(card);
+        const div = document.createElement("div");
+        div.className =
+          "card"
+          + (card.grade === "purple" ? " purple" : "")
+          + (card.grade === "gold" ? " gold-card" : "")
+          + (mergeable ? " mergeable" : "")
+          + (selectedIndex === index ? " selected" : "");
+
+        div.onclick = () => {
+          if (gameOver) return;
+          selectedIndex = selectedIndex === index ? null : index;
+          render();
+        };
+
+        const gradeBadge = card.grade !== "normal" ? `<span class="grade">${getGradeName(card.grade)}</span>` : "";
+
+        div.innerHTML = `
+          <div class="card-head">
+            <div class="card-name">${card.name}</div>
+            ${gradeBadge}
+          </div>
+          <div class="card-tags">
+            <span class="tag">${card.a}</span>
+            <span class="tag">${card.b}</span>
+          </div>
+        `;
+        cardsEl.appendChild(div);
+      });
+    }
+
+    function renderSynergies() {
+      const data = getDamageBreakdown();
+      synergyListEl.innerHTML = "";
+
+      if (data.activeSynergies.length === 0) {
+        return;
+      }
+
+      data.activeSynergies.forEach(s => {
+        const tierClass = s.tier >= 3 ? " tier3" : s.tier >= 2 ? " tier2" : "";
+        const tierLabel = s.tier >= 3 ? "황금" : s.tier >= 2 ? "보라" : "기본";
+
+        const div = document.createElement("div");
+        div.className = "synergy" + tierClass;
+        div.innerHTML = `
+          <span class="synergy-name">${s.name}</span>
+          <span class="synergy-desc">${s.count}장 · ${tierLabel}</span>
+          <span class="synergy-dmg">+${s.damage}</span>
+        `;
+        synergyListEl.appendChild(div);
+      });
+    }
+
+    function renderBattle() {
+      const data = getDamageBreakdown();
+      const stage = stages[Math.min(stageIndex, stages.length - 1)];
+      const percent = Math.min(100, Math.round((data.totalDamage / stage.hp) * 100));
+
+      goldEl.textContent = gold;
+      battleDamageEl.textContent = data.totalDamage;
+      stageNoEl.textContent = Math.min(stageIndex + 1, stages.length);
+      scoreEl.textContent = score;
+
+      enemyEmojiEl.textContent = gameOver ? "💀" : stage.emoji;
+      enemyNameEl.textContent = gameOver ? "게임 종료" : stage.name;
+      enemyStateEl.textContent = gameOver
+        ? `최종 스코어 ${score}`
+        : `기본 ${data.baseDamage} + 시너지 ${data.synergyDamage}`;
+      enemyHpEl.textContent = stage.hp;
+      rewardGoldEl.textContent = stage.reward + "G";
+      damageProgressEl.style.width = gameOver ? "0%" : percent + "%";
+    }
+
+    function render() {
+      renderBattle();
+      renderCards();
+      renderSynergies();
+
+      const mergeInfo = getMergeInfo();
+
+      drawBtn.disabled = gameOver || gold < DRAW_COST;
+      battleBtn.disabled = gameOver || ownedCards.length === 0;
+      sellBtn.disabled = gameOver || selectedIndex === null;
+      mergeBtn.disabled = gameOver || !mergeInfo;
+      resetBtn.disabled = false;
+      sideResetBtn.disabled = false;
+
+      if (selectedIndex !== null && ownedCards[selectedIndex]) {
+        const reward = getSellReward(ownedCards[selectedIndex].grade);
+        sellBtn.textContent = `선택 판매 +${reward}G`;
+      } else {
+        sellBtn.textContent = "선택 판매";
+      }
+
+      if (mergeInfo) {
+        mergeBtn.textContent = mergeInfo.nextGrade === "gold" ? "황금카드 합치기" : "보라카드 합치기";
+      } else {
+        mergeBtn.textContent = "선택 카드 합치기";
+      }
+    }
+
+    function drawCard() {
+      if (gameOver) return;
+
+      if (gold < DRAW_COST) {
+        addLog('<span class="lose">골드가 부족합니다.</span>');
+        return;
+      }
+
+      gold -= DRAW_COST;
+      const original = cardPool[Math.floor(Math.random() * cardPool.length)];
+      const card = makeCard(original, "normal");
+      ownedCards.push(card);
+      selectedIndex = ownedCards.length - 1;
+
+      addLog(`🎴 <b>${card.name}</b> 획득! <span class="muted">${card.a} / ${card.b}</span>`);
+      render();
+    }
+
+    function sellSelectedCard() {
+      if (gameOver) return;
+
+      if (selectedIndex === null || !ownedCards[selectedIndex]) {
+        addLog('<span class="lose">판매할 카드를 선택하세요.</span>');
+        return;
+      }
+
+      const sold = ownedCards.splice(selectedIndex, 1)[0];
+      const reward = getSellReward(sold.grade);
+      gold += reward;
+      selectedIndex = null;
+
+      addLog(`💰 <b>${sold.name}</b> ${getGradeName(sold.grade)}카드 판매! <span class="win">+${reward}골드</span>`);
+      render();
+    }
+
+    function mergeSelectedCard() {
+      if (gameOver) return;
+
+      const mergeInfo = getMergeInfo();
+      if (!mergeInfo) {
+        addLog('<span class="lose">같은 등급의 같은 카드가 3장 있어야 합칠 수 있습니다.</span>');
+        return;
+      }
+
+      const { selected, sameCards, nextGrade } = mergeInfo;
+      const removeIndexes = sameCards.map(item => item.index).sort((a, b) => b - a);
+
+      removeIndexes.forEach(index => ownedCards.splice(index, 1));
+
+      const merged = makeCard(selected, nextGrade);
+      ownedCards.push(merged);
+      selectedIndex = ownedCards.length - 1;
+
+      if (nextGrade === "gold") {
+        addLog(`🌟 <b>${selected.name}</b> 보라카드 3장 합성! <span class="win">황금카드 완성 · 데미지 160</span>`);
+      } else {
+        addLog(`🟣 <b>${selected.name}</b> 일반카드 3장 합성! <span class="win">보라카드 완성 · 데미지 40</span>`);
+      }
+
+      render();
+    }
+
+    function playBattleAnimation(totalDamage, isWin) {
+      if (!enemyStripEl || !slashEffectEl || !damagePopEl) return;
+
+      enemyStripEl.classList.remove("hit", "attack-ready");
+      slashEffectEl.classList.remove("active");
+      damagePopEl.classList.remove("active");
+
+      void enemyStripEl.offsetWidth;
+      enemyStripEl.classList.add("attack-ready");
+
+      setTimeout(() => {
+        slashEffectEl.classList.add("active");
+        enemyStripEl.classList.add("hit");
+        damagePopEl.textContent = isWin ? `-${totalDamage} CRITICAL!` : `-${totalDamage} HIT`;
+        damagePopEl.classList.add("active");
+      }, 120);
+
+      setTimeout(() => {
+        enemyStripEl.classList.remove("hit", "attack-ready");
+        slashEffectEl.classList.remove("active");
+        damagePopEl.classList.remove("active");
+      }, 950);
+    }
+
+    function battle() {
+      if (gameOver) return;
+
+      if (ownedCards.length === 0) {
+        addLog('<span class="lose">카드가 없어 전투할 수 없습니다.</span>');
+        return;
+      }
+
+      const data = getDamageBreakdown();
+      const stage = stages[Math.min(stageIndex, stages.length - 1)];
+      const isWin = data.totalDamage >= stage.hp;
+
+      playBattleAnimation(data.totalDamage, isWin);
+
+      if (isWin) {
+        gold += stage.reward;
+        const overDamage = data.totalDamage - stage.hp;
+        score += overDamage;
+
+        const activeText = data.activeSynergies.length
+          ? data.activeSynergies.map(s => `${s.name} +${s.damage}`).join(", ")
+          : "없음";
+
+        addLog(`
+          ⚔️ <span class="win">승리!</span>
+          ${stage.name} 클리어 · 보상 <b>${stage.reward}G</b>
+          <br>오버 데미지 <b>${overDamage}</b> · 스코어 <b>+${overDamage}</b>
+          <br>발동 시너지: <b>${activeText}</b>
+        `);
+
+        if (stageIndex < stages.length - 1) {
+          stageIndex += 1;
+        } else {
+          addLog('🏆 <span class="win">마지막 스테이지 클리어! 최종 스테이지 반복 파밍 모드입니다.</span>');
+        }
+      } else {
+        gameOver = true;
+        addLog(`
+          💀 <span class="lose">패배 · 게임 종료</span>
+          <br>총 데미지 <b>${data.totalDamage}</b> / 필요 데미지 <b>${stage.hp}</b>
+          <br>최종 스코어: <b>${score}</b>
+        `);
+      }
+
+      render();
+    }
+
+    function resetGame() {
+      gold = START_GOLD;
+      ownedCards = [];
+      selectedIndex = null;
+      stageIndex = 0;
+      score = 0;
+      gameOver = false;
+      logEl.innerHTML = "";
+      addLog("새 게임 시작. Sea Of Milkyway 🌌");
+      render();
+    }
+
+    drawBtn.addEventListener("click", drawCard);
+    battleBtn.addEventListener("click", battle);
+    sellBtn.addEventListener("click", sellSelectedCard);
+    mergeBtn.addEventListener("click", mergeSelectedCard);
+    resetBtn.addEventListener("click", resetGame);
+    sideResetBtn.addEventListener("click", resetGame);
+
+    addLog("Sea Of Milkyway 시작. 카드를 뽑아 은하를 항해하세요 🌌");
+    render();
+  </script>
+</body>
+</html>
