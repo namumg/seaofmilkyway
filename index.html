@@ -36,6 +36,10 @@
       border: 1px solid rgba(255,255,255,0.14);
       box-shadow: 0 14px 34px rgba(0,0,0,0.22);
       backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
     h1 {
@@ -657,6 +661,11 @@
       font-weight: 950;
     }
 
+    .thorn-damage-preview .safe-dmg {
+      color: #79ffbd;
+      font-weight: 950;
+    }
+
     .thorn-info-box {
       display: grid;
       gap: 6px;
@@ -793,7 +802,7 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       margin-bottom: 10px;
     }
@@ -806,15 +815,18 @@
       min-width: 100%;
       max-width: 100%;
       margin: 0;
-      padding: 0 2px 0 2px;
+      padding: 2px 4px 14px;
       justify-content: center;
       align-content: start;
-      min-height: 420px;
+      min-height: 0;
+      height: 420px;
       max-height: 420px;
       overflow-y: auto;
       overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      overscroll-behavior-y: contain;
       scrollbar-gutter: stable;
-      overscroll-behavior: contain;
     }
 
     .card {
@@ -983,8 +995,137 @@
       color: #ffe182;
     }
 
+
+
+    .ranking-panel {
+      display: grid;
+      gap: 10px;
+    }
+
+    .ranking-help {
+      color: #d8d8f5;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .ranking-submit-box {
+      display: none;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .ranking-submit-box.active {
+      display: grid;
+    }
+
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .ranking-input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      padding: 10px 11px;
+      color: #fff;
+      background: rgba(0,0,0,0.24);
+      outline: none;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .ranking-input::placeholder {
+      color: rgba(230,230,255,0.58);
+    }
+
+    .ranking-btn {
+      background: linear-gradient(135deg, #37d48f, #517cff);
+      padding: 10px 12px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .ranking-load-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .ranking-load-controls .ranking-btn:first-child {
+      background: linear-gradient(135deg, #ffd957, #ff7aa8);
+      color: #16182a;
+    }
+
+    .ranking-list {
+      display: grid;
+      gap: 6px;
+      min-height: 42px;
+      max-height: 230px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      overscroll-behavior-y: contain;
+    }
+
+    .ranking-item {
+      display: grid;
+      grid-template-columns: 30px minmax(52px, 1fr) 54px 108px 34px;
+      gap: 5px;
+      align-items: center;
+      padding: 8px 9px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.09);
+      font-size: 11px;
+      line-height: 1.15;
+      overflow: hidden;
+    }
+
+    .ranking-rank {
+      color: #ffe182;
+      font-weight: 1000;
+    }
+
+    .ranking-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 900;
+    }
+
+    .ranking-score {
+      color: #79ffbd;
+      font-weight: 1000;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .ranking-clear-time,
+    .ranking-thorn-count {
+      color: #ffe182;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      text-align: right;
+    }
+
+    .ranking-message {
+      color: #cfd0f5;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     @media (max-width: 1080px) {
-      .main-layout { grid-template-columns: 1fr; }
+
+
+    .main-layout { grid-template-columns: 1fr; }
       .side-grid {
         width: 100%;
         max-width: none;
@@ -1002,22 +1143,79 @@
 
     @media (max-width: 720px) {
       body { padding: 10px; }
-      h1 { font-size: 24px; }
-      .battle-actions, .controls { grid-template-columns: 1fr; }
+      .title-box {
+        padding: 12px;
+        gap: 8px;
+      }
+      h1 { font-size: 22px; }
+      .battle-actions { grid-template-columns: 1fr; }
+      .controls {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .controls button {
+        padding: 10px 6px;
+        font-size: 12px;
+        letter-spacing: -0.4px;
+        white-space: nowrap;
+      }
+
+      .ranking-row {
+        grid-template-columns: 1fr;
+      }
+      .ranking-btn {
+        width: 100%;
+      }
+      .ranking-load-controls {
+        grid-template-columns: 1fr;
+      }
+      .ranking-item {
+        grid-template-columns: 26px minmax(42px, 1fr) 48px 96px 30px;
+        gap: 4px;
+        padding: 7px 7px;
+        font-size: 10.5px;
+      }
+      .ranking-rank {
+        font-size: 10.5px;
+      }
+      .ranking-clear-time,
+      .ranking-thorn-count {
+        grid-column: auto;
+      }
+
       .enemy-strip { min-height: 90px; }
       .enemy-emoji { width: 70px; height: 70px; font-size: 54px; }
       .enemy-name { font-size: 20px; }
+      .side-grid,
+      .card-manage-panel {
+        overflow: visible;
+      }
       .cards {
-        grid-template-columns: repeat(4, 72px);
-        gap: 4px;
+        grid-template-columns: repeat(4, minmax(68px, 72px));
+        gap: 5px;
         width: 100%;
-        min-width: 100%;
+        min-width: 0;
         max-width: 100%;
         justify-content: center;
-        min-height: 360px;
-        max-height: 360px;
+        height: min(52vh, 430px);
+        min-height: 280px;
+        max-height: none;
+        padding: 2px 4px 18px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior-y: contain;
       }
-      .card { width: 72px; min-width: 72px; max-width: 72px; }
+      .card { width: 72px; min-width: 68px; max-width: 72px; }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .card:hover,
+      button:hover {
+        transform: none;
+        filter: none;
+      }
     }
   </style>
 </head>
@@ -1074,7 +1272,7 @@
 
         <label class="thorn-option">
           <input type="checkbox" id="thornCheck">
-          <span><b>뭉툭한가시</b> <span class="thorn-desc">[10%확률로 데미지+10%, 90%확률로 -20%. 뭉가 성공시 7G획득]</span></span>
+          <span><b>뭉툭한가시</b> <span class="thorn-desc">[10%확률로 데미지+10%, 90%확률로 -20%. 뭉가 성공시 5G획득]</span></span>
         </label>
 
         <div class="battle-actions">
@@ -1098,7 +1296,6 @@
             <button class="draw-btn" id="drawBtn">카드 뽑기 -5G</button>
             <button class="sell-btn" id="sellBtn">선택 판매</button>
             <button class="merge-btn" id="mergeBtn">선택 카드 합치기</button>
-            <button class="reset-btn" id="sideResetBtn">리셋</button>
           </div>
 
           <div class="cards" id="cards"></div>
@@ -1108,6 +1305,24 @@
           <h2>발동 시너지</h2>
           <div class="synergy-list" id="synergyList"></div>
         </section>
+
+        <section class="panel ranking-panel">
+          <h2>온라인 랭킹</h2>
+          <div class="ranking-help">게임 중에는 서버에 접속하지 않습니다. 최종 클리어 후 등록/조회 버튼을 누를 때만 통신합니다.</div>
+          <div class="ranking-submit-box" id="rankingSubmitBox">
+            <div class="ranking-message" id="rankingFinalScore">클리어 기록: -</div>
+            <div class="ranking-row">
+              <input class="ranking-input" id="rankingNameInput" maxlength="12" placeholder="닉네임 입력" autocomplete="off">
+              <button class="ranking-btn" id="rankingSubmitBtn">랭킹 등록</button>
+            </div>
+          </div>
+          <div class="ranking-load-controls">
+            <button class="ranking-btn" id="rankingLoadFastBtn">빠른 클리어 TOP 10</button>
+            <button class="ranking-btn" id="rankingLoadScoreBtn">고득점 TOP 10</button>
+          </div>
+          <div class="ranking-message" id="rankingMessage">랭킹은 버튼을 눌렀을 때만 불러옵니다.</div>
+          <div class="ranking-list" id="rankingList"></div>
+        </section>
       </aside>
     </div>
   </div>
@@ -1115,6 +1330,8 @@
   <script>
     const START_GOLD = 15;
     const DRAW_COST = 5;
+    const RANKING_API_URL = "https://script.google.com/macros/s/AKfycbxde7Ya4Rcd664vF9ZD3ep2Ga7s1ct21J3Y53UNKebaKO2ti9HH986CyrdFY0a92zMR/exec";
+    const RANKING_TOP_LIMIT = 10;
 
     const SELL_REWARDS = {
       normal: 3,
@@ -1175,7 +1392,7 @@
       { name: "10스테이지", emoji: "🌌", hp: 400, reward: 23 },
       { name: "11스테이지", emoji: "🦑", hp: 500, reward: 23 },
       { name: "12스테이지", emoji: "🐋", hp: 700, reward: 23 },
-      { name: "13스테이지", emoji: "👑", hp: 1000, reward: 23 }
+      { name: "13스테이지", emoji: "👑", hp: 1100, reward: 23 }
     ];
 
     let gold = START_GOLD;
@@ -1184,6 +1401,14 @@
     let stageIndex = 0;
     let score = 0;
     let gameOver = false;
+    let gameCleared = false;
+    let clearTimeText = "";
+    let clearDurationMs = 0;
+    let gameStartedAt = Date.now();
+    let rankingSubmitted = false;
+    let cardTouchStartY = 0;
+    let cardTouchMoved = false;
+    let ignoreNextCardClick = false;
 
     const THORN_SUCCESS_COUNT_KEY = "sea_of_milkyway_thorn_success_count";
     const THORN_FAIL_COUNT_KEY = "sea_of_milkyway_thorn_fail_count";
@@ -1217,7 +1442,6 @@
     const sellBtn = document.getElementById("sellBtn");
     const mergeBtn = document.getElementById("mergeBtn");
     const resetBtn = document.getElementById("resetBtn");
-    const sideResetBtn = document.getElementById("sideResetBtn");
     const thornCheckEl = document.getElementById("thornCheck");
     const thornSuccessDamageEl = document.getElementById("thornSuccessDamage");
     const thornFailDamageEl = document.getElementById("thornFailDamage");
@@ -1229,11 +1453,225 @@
     const thornRouletteEl = document.getElementById("thornRoulette");
     const rouletteWordEl = document.getElementById("rouletteWord");
     const rouletteSubEl = document.getElementById("rouletteSub");
+    const rankingSubmitBoxEl = document.getElementById("rankingSubmitBox");
+    const rankingFinalScoreEl = document.getElementById("rankingFinalScore");
+    const rankingNameInputEl = document.getElementById("rankingNameInput");
+    const rankingSubmitBtn = document.getElementById("rankingSubmitBtn");
+    const rankingLoadFastBtn = document.getElementById("rankingLoadFastBtn");
+    const rankingLoadScoreBtn = document.getElementById("rankingLoadScoreBtn");
+    const rankingMessageEl = document.getElementById("rankingMessage");
+    const rankingListEl = document.getElementById("rankingList");
 
     function addLog(message) {
       const p = document.createElement("p");
       p.innerHTML = message;
       logEl.prepend(p);
+    }
+
+
+    function sanitizeRankingName(name) {
+      return String(name || "")
+        .replace(/[<>]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 12);
+    }
+
+    function setRankingMessage(message, isError = false) {
+      if (!rankingMessageEl) return;
+      rankingMessageEl.innerHTML = isError
+        ? `<span class="lose">${message}</span>`
+        : message;
+    }
+
+    function formatCurrentTime(date = new Date()) {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      const hh = String(date.getHours()).padStart(2, "0");
+      const mi = String(date.getMinutes()).padStart(2, "0");
+      const ss = String(date.getSeconds()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+    }
+
+    function formatRankingDisplayTime(value) {
+      if (!value) return "-";
+
+      const raw = String(value).trim();
+      const normalized = raw
+        .replace(/\./g, "-")
+        .replace(" ", "T");
+      const date = new Date(normalized);
+
+      if (!Number.isNaN(date.getTime())) {
+        const yy = String(date.getFullYear()).slice(-2);
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        const hours = date.getHours();
+        const ampm = hours < 12 ? "오전" : "오후";
+        const displayHour = hours % 12 || 12;
+        const hh = String(displayHour).padStart(2, "0");
+        const mi = String(date.getMinutes()).padStart(2, "0");
+        return `${yy}-${mm}-${dd} ${ampm}${hh}:${mi}`;
+      }
+
+      const match = raw.match(/(\d{2,4})[-/.](\d{1,2})[-/.](\d{1,2}).*?(\d{1,2}):(\d{2})/);
+      if (match) {
+        const yy = match[1].slice(-2);
+        const mm = String(Number(match[2])).padStart(2, "0");
+        const dd = String(Number(match[3])).padStart(2, "0");
+        const hours = Number(match[4]);
+        const ampm = hours < 12 ? "오전" : "오후";
+        const hh = String(hours % 12 || 12).padStart(2, "0");
+        const mi = match[5];
+        return `${yy}-${mm}-${dd} ${ampm}${hh}:${mi}`;
+      }
+
+      return raw;
+    }
+
+    function formatElapsedTime(ms) {
+      const totalSeconds = Math.max(0, Math.floor(Number(ms || 0) / 1000));
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      if (minutes > 0) return `${minutes}분 ${String(seconds).padStart(2, "0")}초`;
+      return `${seconds}초`;
+    }
+
+    function updateRankingSubmitBox() {
+      if (!rankingSubmitBoxEl || !rankingFinalScoreEl || !rankingSubmitBtn) return;
+
+      if (gameCleared) {
+        rankingSubmitBoxEl.classList.add("active");
+        rankingFinalScoreEl.innerHTML = `클리어 기록: <b class="score">${score}</b>점 · 클리어 시각 ${clearTimeText || "-"} · 뭉가 성공 ${thornSuccessCount}회`;
+        rankingSubmitBtn.disabled = rankingSubmitted;
+        rankingSubmitBtn.textContent = rankingSubmitted ? "등록 완료" : "랭킹 등록";
+      } else {
+        rankingSubmitBoxEl.classList.remove("active");
+        rankingSubmitBtn.disabled = false;
+        rankingSubmitBtn.textContent = "랭킹 등록";
+      }
+    }
+
+    function normalizeRankingRows(payload) {
+      const rawRows = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.rankings)
+          ? payload.rankings
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : Array.isArray(payload?.scores)
+              ? payload.scores
+              : [];
+
+      return rawRows
+        .map(row => {
+          if (Array.isArray(row)) {
+            return {
+              name: row[0] || "익명",
+              score: Number(row[1] || 0),
+              clearTime: row[2] || "",
+              thornSuccessCount: Number(row[3] || 0),
+              clearDurationMs: Number(row[4] || 0),
+              elapsedText: row[4] ? formatElapsedTime(Number(row[4])) : "-"
+            };
+          }
+
+          const duration = Number(row.clearDurationMs || row.clear_duration_ms || row.durationMs || row.elapsedMs || 0);
+          return {
+            name: row.name || row.nickname || row.player || "익명",
+            score: Number(row.score || row.finalScore || row.point || 0),
+            clearTime: row.clearTime || row.clear_time || row.time || "",
+            thornSuccessCount: Number(row.thornSuccessCount || row.thorn_success_count || row.thorn || 0),
+            clearDurationMs: duration,
+            elapsedText: row.elapsedText || row.elapsed || (duration ? formatElapsedTime(duration) : "-")
+          };
+        })
+        .filter(row => Number.isFinite(row.score));
+    }
+
+    function renderRankingRows(rows) {
+      if (!rankingListEl) return;
+
+      if (!rows.length) {
+        rankingListEl.innerHTML = '<div class="ranking-message">아직 표시할 랭킹이 없습니다.</div>';
+        return;
+      }
+
+      rankingListEl.innerHTML = rows.map((row, index) => `
+        <div class="ranking-item">
+          <div class="ranking-rank">#${index + 1}</div>
+          <div class="ranking-name">${sanitizeRankingName(row.name) || "익명"}</div>
+          <div class="ranking-score">${row.score}점</div>
+          <div class="ranking-clear-time">${formatRankingDisplayTime(row.clearTime)}</div>
+          <div class="ranking-thorn-count">🌵${row.thornSuccessCount || 0}</div>
+        </div>
+      `).join("");
+    }
+
+    async function submitRanking() {
+      if (!gameCleared) {
+        setRankingMessage("최종 스테이지 클리어 후에만 랭킹을 등록할 수 있습니다.", true);
+        return;
+      }
+
+      if (rankingSubmitted) return;
+
+      const nickname = sanitizeRankingName(rankingNameInputEl?.value || "");
+      if (!nickname) {
+        setRankingMessage("닉네임을 입력해 주세요.", true);
+        rankingNameInputEl?.focus();
+        return;
+      }
+
+      rankingSubmitted = true;
+      updateRankingSubmitBox();
+      setRankingMessage("서버에 등록 중입니다... 게임 화면은 멈추지 않습니다.");
+
+      const body = new URLSearchParams({
+        action: "submit",
+        name: nickname,
+        score: String(score),
+        clearTime: clearTimeText || formatCurrentTime(),
+        thornSuccessCount: String(thornSuccessCount),
+        clearDurationMs: String(clearDurationMs || 0),
+        date: new Date().toISOString()
+      });
+
+      try {
+        await fetch(RANKING_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body
+        });
+        setRankingMessage("등록 요청 완료! 실제 반영까지 잠깐 걸릴 수 있습니다.");
+      } catch (error) {
+        rankingSubmitted = false;
+        updateRankingSubmitBox();
+        setRankingMessage("랭킹 등록 실패. 서버 주소 또는 네트워크를 확인해야 합니다.", true);
+      }
+    }
+
+    async function loadRankings(sortType = "score") {
+      const buttons = [rankingLoadFastBtn, rankingLoadScoreBtn].filter(Boolean);
+      buttons.forEach(btn => btn.disabled = true);
+
+      const label = sortType === "time" ? "빠른 클리어 TOP 10" : "고득점 TOP 10";
+      setRankingMessage(`${label} 불러오는 중...`);
+
+      try {
+        const url = `${RANKING_API_URL}${RANKING_API_URL.includes("?") ? "&" : "?"}action=list&sort=${encodeURIComponent(sortType)}&limit=${RANKING_TOP_LIMIT}&t=${Date.now()}`;
+        const response = await fetch(url, { method: "GET", cache: "no-store" });
+        const payload = await response.json();
+        const rows = normalizeRankingRows(payload);
+        renderRankingRows(rows);
+        setRankingMessage(`${label}을 불러왔습니다. 자동 새로고침은 하지 않습니다.`);
+      } catch (error) {
+        setRankingMessage("랭킹 조회 실패. 서버 응답을 확인해야 합니다.", true);
+      } finally {
+        buttons.forEach(btn => btn.disabled = false);
+      }
     }
 
     function makeCard(original, grade = "normal") {
@@ -1388,6 +1826,12 @@
           + (selectedIndex === index ? " selected" : "");
 
         div.onclick = () => {
+          // 모바일에서 카드 목록을 스크롤한 직후 손을 떼면 카드가 선택되는 문제를 막습니다.
+          if (ignoreNextCardClick) {
+            ignoreNextCardClick = false;
+            return;
+          }
+
           if (gameOver) return;
           selectedIndex = selectedIndex === index ? null : index;
           render();
@@ -1447,21 +1891,23 @@
       if (thornFailCountEl) thornFailCountEl.textContent = thornFailCount;
       if (thornResultHintEl) {
         if (thornFailDamage >= stage.hp) {
-          thornResultHintEl.innerHTML = '<span class="fail-dmg">뭉가 실패해도 이김</span>';
+          thornResultHintEl.innerHTML = '<span class="safe-dmg">뭉가 실패해도 승리</span>';
         } else if (thornSuccessDamage >= stage.hp) {
-          thornResultHintEl.innerHTML = '<span class="success-dmg">뭉가 성공하면 이김</span>';
+          thornResultHintEl.innerHTML = '<span class="success-dmg">뭉가 성공하면 승리</span>';
         } else {
-          thornResultHintEl.innerHTML = '<span>뭉가 성공해도 못 이김</span>';
+          thornResultHintEl.innerHTML = '<span class="fail-dmg">뭉가 성공해도 사망</span>';
         }
       }
       stageNoEl.textContent = Math.min(stageIndex + 1, stages.length);
       scoreEl.textContent = score;
 
-      enemyEmojiEl.textContent = gameOver ? "💀" : stage.emoji;
-      enemyNameEl.textContent = gameOver ? "게임 종료" : stage.name;
-      enemyStateEl.textContent = gameOver
-        ? `최종 스코어 ${score}`
-        : `기본 ${data.baseDamage} + 시너지 ${data.synergyDamage}`;
+      enemyEmojiEl.textContent = gameCleared ? "🏆" : gameOver ? "💀" : stage.emoji;
+      enemyNameEl.textContent = gameCleared ? "게임 클리어" : gameOver ? "게임 종료" : stage.name;
+      enemyStateEl.textContent = gameCleared
+        ? `최종 스코어 ${score} · 클리어 시각 ${clearTimeText || "-"} · 소요 ${formatElapsedTime(clearDurationMs)}`
+        : gameOver
+          ? `최종 스코어 ${score}`
+          : `기본 ${data.baseDamage} + 시너지 ${data.synergyDamage}`;
       enemyHpEl.textContent = stage.hp;
       rewardGoldEl.textContent = stage.reward + "G";
       damageProgressEl.style.width = gameOver ? "0%" : percent + "%";
@@ -1479,7 +1925,7 @@
       sellBtn.disabled = gameOver || selectedIndex === null;
       mergeBtn.disabled = gameOver || !mergeInfo;
       resetBtn.disabled = false;
-      sideResetBtn.disabled = false;
+      updateRankingSubmitBox();
 
       if (selectedIndex !== null && ownedCards[selectedIndex]) {
         const reward = getSellReward(ownedCards[selectedIndex].grade);
@@ -1584,7 +2030,7 @@
       rouletteWordEl.textContent = thornSuccess ? "성공!" : "실패...";
       rouletteWordEl.className = "roulette-word " + (thornSuccess ? "success" : "fail");
       rouletteSubEl.textContent = thornSuccess
-        ? "뭉툭한가시 성공! 데미지 +10%, 7골드 획득!"
+        ? "뭉툭한가시 성공! 데미지 +10%, 5골드 획득!"
         : "뭉가실패... 데미지 -20%";
 
       await sleep(950);
@@ -1673,10 +2119,10 @@
 
         if (thornSuccess) {
           battleDamage = Math.floor(battleDamage * 1.10);
-          gold += 7;
+          gold += 5;
           thornSuccessCount += 1;
           saveThornCounts();
-          thornText = `<br>🌵 뭉툭한가시 성공! 데미지 +10% → <b>${battleDamage}</b> · <b>+7G</b>`;
+          thornText = `<br>🌵 뭉툭한가시 성공! 데미지 +10% → <b>${battleDamage}</b> · <b>+5G</b>`;
           thornPopupText = "뭉툭한가시\n성공";
           thornPopupKind = "success";
           showThornSuccessEffect();
@@ -1714,7 +2160,13 @@
         if (stageIndex < stages.length - 1) {
           stageIndex += 1;
         } else {
-          addLog('🏆 <span class="win">마지막 스테이지 클리어! 최종 스테이지 반복 파밍 모드입니다.</span>');
+          gameCleared = true;
+          gameOver = true;
+          clearTimeText = formatCurrentTime();
+          clearDurationMs = Date.now() - gameStartedAt;
+          addLog(`🏆 <span class="win">최종 클리어!</span> 이름을 입력하고 랭킹 등록을 누르면 서버에 기록됩니다.<br>클리어 시각 <b>${clearTimeText}</b> · 소요 <b>${formatElapsedTime(clearDurationMs)}</b> · 뭉가 성공 <b>${thornSuccessCount}</b>회`);
+          setRankingMessage("클리어 완료! 이름을 입력하고 랭킹 등록을 눌러주세요.");
+          setTimeout(() => rankingNameInputEl?.focus(), 120);
         }
       } else {
         gameOver = true;
@@ -1728,24 +2180,15 @@
       render();
     }
 
-    function resetGame() {
-      gold = START_GOLD;
-      ownedCards = [];
-      selectedIndex = null;
-      stageIndex = 0;
-      score = 0;
-      gameOver = false;
-      logEl.innerHTML = "";
-      addLog("새 게임 시작. Sea Of Milkyway 🌌");
-      render();
-    }
 
     drawBtn.addEventListener("click", drawCard);
     battleBtn.addEventListener("click", battle);
     sellBtn.addEventListener("click", sellSelectedCard);
     mergeBtn.addEventListener("click", mergeSelectedCard);
     resetBtn.addEventListener("click", resetGame);
-    sideResetBtn.addEventListener("click", resetGame);
+    if (rankingSubmitBtn) rankingSubmitBtn.addEventListener("click", submitRanking);
+    if (rankingLoadFastBtn) rankingLoadFastBtn.addEventListener("click", () => loadRankings("time"));
+    if (rankingLoadScoreBtn) rankingLoadScoreBtn.addEventListener("click", () => loadRankings("score"));
 
     addLog("Sea Of Milkyway 시작. 카드를 뽑아 은하를 항해하세요 🌌");
     render();
@@ -1760,7 +2203,7 @@
         <div class="roulette-window">
           <div class="roulette-word spin" id="rouletteWord">성공</div>
         </div>
-        <div class="roulette-sub" id="rouletteSub">10% 확률로 성공하면 데미지 +10%와 7골드를 얻습니다.</div>
+        <div class="roulette-sub" id="rouletteSub">10% 확률로 성공하면 데미지 +10%와 5골드를 얻습니다.</div>
       </div>
     </div>
   </div>
