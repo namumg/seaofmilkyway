@@ -10,7 +10,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 16px;
+      padding: 10px;
       font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
       color: #fff;
       background:
@@ -21,7 +21,7 @@
     }
 
     .game {
-      max-width: 1260px;
+      max-width: 1180px;
       margin: 0 auto;
     }
 
@@ -52,13 +52,13 @@
     .main-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 520px;
-      gap: 14px;
+      gap: 10px;
       align-items: start;
     }
 
     .panel {
-      border-radius: 20px;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 10px;
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.14);
       box-shadow: 0 14px 34px rgba(0,0,0,0.22);
@@ -67,8 +67,8 @@
     }
 
     .panel h2 {
-      margin: 0 0 10px;
-      font-size: 17px;
+      margin: 0 0 6px;
+      font-size: 15px;
       letter-spacing: -0.3px;
     }
 
@@ -78,7 +78,7 @@
 
     .battle-panel {
       display: grid;
-      gap: 10px;
+      gap: 7px;
       background:
         radial-gradient(circle at 50% 0%, rgba(255,217,87,0.16), transparent 24%),
         radial-gradient(circle at 20% 100%, rgba(255,80,130,0.10), transparent 28%),
@@ -215,9 +215,9 @@
       grid-template-columns: auto 1fr;
       gap: 12px;
       align-items: center;
-      min-height: 124px;
-      padding: 14px;
-      border-radius: 20px;
+      min-height: 96px;
+      padding: 10px;
+      border-radius: 16px;
       background:
         radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10), transparent 45%),
         linear-gradient(135deg, rgba(255,95,143,0.24), rgba(95,124,255,0.16));
@@ -238,9 +238,9 @@
     }
 
     .enemy-emoji {
-      font-size: 72px;
-      width: 92px;
-      height: 92px;
+      font-size: 58px;
+      width: 72px;
+      height: 72px;
       display: grid;
       place-items: center;
       border-radius: 22px;
@@ -253,7 +253,7 @@
     }
 
     .enemy-name {
-      font-size: 25px;
+      font-size: 21px;
       font-weight: 950;
       line-height: 1.10;
       letter-spacing: -0.4px;
@@ -281,8 +281,8 @@
     }
 
     .battle-info-bar {
-      padding: 10px 12px;
-      border-radius: 16px;
+      padding: 7px 9px;
+      border-radius: 13px;
       background:
         linear-gradient(90deg, rgba(0,0,0,0.26), rgba(255,255,255,0.05), rgba(0,0,0,0.26));
       border: 1px solid rgba(255,255,255,0.12);
@@ -722,7 +722,7 @@
     button {
       border: 0;
       border-radius: 14px;
-      padding: 11px 12px;
+      padding: 9px 10px;
       color: #fff;
       font-size: 14px;
       font-weight: 950;
@@ -747,8 +747,8 @@
       min-height: 72px;
       max-height: 115px;
       overflow-y: auto;
-      padding: 10px 12px;
-      border-radius: 16px;
+      padding: 7px 9px;
+      border-radius: 13px;
       background: rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.11);
       color: #ececff;
@@ -763,7 +763,7 @@
 
     .side-grid {
       display: grid;
-      gap: 14px;
+      gap: 10px;
       width: 520px;
       min-width: 520px;
       max-width: 520px;
@@ -777,7 +777,7 @@
     }
 
     .gold-box {
-      margin-bottom: 10px;
+      margin-bottom: 7px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -804,7 +804,7 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 7px;
     }
 
     .cards {
@@ -992,6 +992,16 @@
     }
 
 
+
+    .battle-log-panel {
+      display: grid;
+      gap: 8px;
+    }
+
+    .battle-log-panel .log {
+      min-height: 42px;
+      max-height: 72px;
+    }
 
     .ranking-panel {
       display: grid;
@@ -1208,12 +1218,6 @@
 </head>
 <body>
   <div class="game">
-    <header>
-      <div class="title-box">
-        <h1>Sea Of Milkyway</h1>
-      </div>
-    </header>
-
     <div class="main-layout">
       <section class="panel battle-panel">
         <h2>전투</h2>
@@ -1266,8 +1270,6 @@
           <button class="battle-btn" id="battleBtn">전투 시작</button>
           <button class="reset-btn" id="resetBtn">리셋</button>
         </div>
-
-        <div class="log" id="log"></div>
       </section>
 
       <aside class="side-grid">
@@ -1293,6 +1295,11 @@
           <div class="synergy-list" id="synergyList"></div>
         </section>
 
+        <section class="panel battle-log-panel">
+          <h2>전투 로그</h2>
+          <div class="log" id="log"></div>
+        </section>
+
         <section class="panel ranking-panel">
           <h2>온라인 랭킹</h2>
           <div class="ranking-help">게임 중에는 서버에 접속하지 않습니다. 최종 클리어 후 등록/조회 버튼을 누를 때만 통신합니다.</div>
@@ -1310,6 +1317,7 @@
           <div class="ranking-message" id="rankingMessage">랭킹은 버튼을 눌렀을 때만 불러옵니다.</div>
           <div class="ranking-list" id="rankingList"></div>
         </section>
+
       </aside>
     </div>
   </div>
