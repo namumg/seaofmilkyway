@@ -1311,7 +1311,7 @@
             </div>
           </div>
           <div class="ranking-load-controls">
-            <button class="ranking-btn" id="rankingLoadFastBtn">빠른 클리어 TOP 10</button>
+            <button class="ranking-btn" id="rankingLoadFastBtn">먼저 클리어 TOP 10</button>
             <button class="ranking-btn" id="rankingLoadScoreBtn">고득점 TOP 10</button>
           </div>
           <div class="ranking-message" id="rankingMessage">랭킹은 버튼을 눌렀을 때만 불러옵니다.</div>
@@ -1535,6 +1535,42 @@
       }
     }
 
+    function getRankingTimestamp(row) {
+      const candidates = [
+        row.submittedAt,
+        row.submitted_at,
+        row.createdAt,
+        row.created_at,
+        row.registeredAt,
+        row.registered_at,
+        row.date,
+        row.timestamp,
+        row.clearTimestamp,
+        row.clear_timestamp,
+        row.clearTime,
+        row.clear_time,
+        row.time
+      ];
+
+      for (const value of candidates) {
+        if (!value) continue;
+        const text = String(value).trim();
+        const direct = new Date(text.includes("T") ? text : text.replace(" ", "T"));
+        if (!Number.isNaN(direct.getTime())) return direct.getTime();
+
+        const compact = text.match(/^(\d{2})-(\d{2})-(\d{2})\s+(오전|오후)(\d{1,2}):(\d{2})$/);
+        if (compact) {
+          const [, yy, mm, dd, ampm, hhText, mi] = compact;
+          let hours = Number(hhText);
+          if (ampm === "오후" && hours !== 12) hours += 12;
+          if (ampm === "오전" && hours === 12) hours = 0;
+          return new Date(2000 + Number(yy), Number(mm) - 1, Number(dd), hours, Number(mi)).getTime();
+        }
+      }
+
+      return Number.MAX_SAFE_INTEGER;
+    }
+
     function normalizeRankingRows(payload) {
       const rawRows = Array.isArray(payload)
         ? payload
@@ -1547,29 +1583,56 @@
               : [];
 
       return rawRows
-        .map(row => {
+        .map((row, originalIndex) => {
           if (Array.isArray(row)) {
-            return {
+            const normalized = {
               name: row[0] || "익명",
               score: Number(row[1] || 0),
               clearTime: row[2] || "",
               thornSuccessCount: Number(row[3] || 0),
               clearDurationMs: Number(row[4] || 0),
-              elapsedText: row[4] ? formatElapsedTime(Number(row[4])) : "-"
+              submittedAt: row[5] || row[2] || "",
+              elapsedText: row[4] ? formatElapsedTime(Number(row[4])) : "-",
+              originalIndex
             };
+            normalized.rankingTimestamp = getRankingTimestamp(normalized);
+            return normalized;
           }
 
           const duration = Number(row.clearDurationMs || row.clear_duration_ms || row.durationMs || row.elapsedMs || 0);
-          return {
+          const normalized = {
             name: row.name || row.nickname || row.player || "익명",
             score: Number(row.score || row.finalScore || row.point || 0),
-            clearTime: row.clearTime || row.clear_time || row.time || "",
+            clearTime: row.clearTime || row.clear_time || row.time || row.date || row.createdAt || row.created_at || "",
             thornSuccessCount: Number(row.thornSuccessCount || row.thorn_success_count || row.thorn || 0),
             clearDurationMs: duration,
-            elapsedText: row.elapsedText || row.elapsed || (duration ? formatElapsedTime(duration) : "-")
+            submittedAt: row.submittedAt || row.submitted_at || row.createdAt || row.created_at || row.registeredAt || row.registered_at || row.date || row.timestamp || "",
+            elapsedText: row.elapsedText || row.elapsed || (duration ? formatElapsedTime(duration) : "-"),
+            originalIndex
           };
+          normalized.rankingTimestamp = getRankingTimestamp(normalized);
+          return normalized;
         })
         .filter(row => Number.isFinite(row.score));
+    }
+
+    function sortRankingRows(rows, sortType) {
+      const sorted = [...rows];
+
+      if (sortType === "first") {
+        sorted.sort((a, b) =>
+          a.rankingTimestamp - b.rankingTimestamp ||
+          a.originalIndex - b.originalIndex
+        );
+        return sorted.slice(0, RANKING_TOP_LIMIT);
+      }
+
+      sorted.sort((a, b) =>
+        b.score - a.score ||
+        a.rankingTimestamp - b.rankingTimestamp ||
+        a.originalIndex - b.originalIndex
+      );
+      return sorted.slice(0, RANKING_TOP_LIMIT);
     }
 
     function renderRankingRows(rows) {
@@ -1639,14 +1702,19 @@
       const buttons = [rankingLoadFastBtn, rankingLoadScoreBtn].filter(Boolean);
       buttons.forEach(btn => btn.disabled = true);
 
-      const label = sortType === "time" ? "빠른 클리어 TOP 10" : "고득점 TOP 10";
+      const isFirstClearRanking = sortType === "first";
+      const label = isFirstClearRanking ? "먼저 클리어 TOP 10" : "고득점 TOP 10";
       setRankingMessage(`${label} 불러오는 중...`);
 
       try {
-        const url = `${RANKING_API_URL}${RANKING_API_URL.includes("?") ? "&" : "?"}action=list&sort=${encodeURIComponent(sortType)}&limit=${RANKING_TOP_LIMIT}&t=${Date.now()}`;
+        // 먼저 클리어 랭킹은 클리어까지 걸린 시간이 아니라 등록/클리어된 실제 시각 기준으로 정렬합니다.
+        // 서버가 어떤 정렬로 내려주더라도 프론트에서 한 번 더 정렬하기 위해 넉넉하게 받아옵니다.
+        const requestSort = isFirstClearRanking ? "first" : "score";
+        const requestLimit = isFirstClearRanking ? 500 : RANKING_TOP_LIMIT;
+        const url = `${RANKING_API_URL}${RANKING_API_URL.includes("?") ? "&" : "?"}action=list&sort=${encodeURIComponent(requestSort)}&limit=${requestLimit}&t=${Date.now()}`;
         const response = await fetch(url, { method: "GET", cache: "no-store" });
         const payload = await response.json();
-        const rows = normalizeRankingRows(payload);
+        const rows = sortRankingRows(normalizeRankingRows(payload), sortType);
         renderRankingRows(rows);
         setRankingMessage(`${label}을 불러왔습니다. 자동 새로고침은 하지 않습니다.`);
       } catch (error) {
@@ -2217,7 +2285,7 @@
     mergeBtn.addEventListener("click", mergeSelectedCard);
     resetBtn.addEventListener("click", resetGame);
     if (rankingSubmitBtn) rankingSubmitBtn.addEventListener("click", submitRanking);
-    if (rankingLoadFastBtn) rankingLoadFastBtn.addEventListener("click", () => loadRankings("time"));
+    if (rankingLoadFastBtn) rankingLoadFastBtn.addEventListener("click", () => loadRankings("first"));
     if (rankingLoadScoreBtn) rankingLoadScoreBtn.addEventListener("click", () => loadRankings("score"));
 
     addLog("Sea Of Milkyway 시작. 카드를 뽑아 은하를 항해하세요 🌌");
