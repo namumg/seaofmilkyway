@@ -819,14 +819,10 @@
       justify-content: center;
       align-content: start;
       min-height: 0;
-      height: 420px;
-      max-height: 420px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
-      overscroll-behavior-y: contain;
-      scrollbar-gutter: stable;
+      height: auto;
+      max-height: none;
+      overflow: visible;
+      touch-action: auto;
     }
 
     .card {
@@ -1191,15 +1187,12 @@
         min-width: 0;
         max-width: 100%;
         justify-content: center;
-        height: min(52vh, 430px);
-        min-height: 280px;
+        height: auto;
+        min-height: 0;
         max-height: none;
         padding: 2px 4px 18px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
-        overscroll-behavior-y: contain;
+        overflow: visible;
+        touch-action: auto;
       }
       .card { width: 72px; min-width: 68px; max-width: 72px; }
     }
@@ -1876,7 +1869,7 @@
           + (selectedIndex === index ? " selected" : "");
 
         div.onclick = () => {
-          // 모바일에서 카드 목록을 스크롤한 직후 손을 떼면 카드가 선택되는 문제를 막습니다.
+          // 모바일에서 화면을 스크롤한 직후 손을 떼면 카드가 선택되는 문제를 막습니다.
           if (ignoreNextCardClick) {
             ignoreNextCardClick = false;
             return;
